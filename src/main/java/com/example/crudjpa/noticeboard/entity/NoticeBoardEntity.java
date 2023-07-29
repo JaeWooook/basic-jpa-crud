@@ -1,9 +1,6 @@
 package com.example.crudjpa.noticeboard.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -14,11 +11,18 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 @Setter
-@Table(name="noticeboard")
+@Table(name="NOTICEBOARD")
+@SequenceGenerator(
+        name = "NOTICEBOARD_PK_GENERATOR",
+        sequenceName = "NOTICEBOARD_PK_SEQ",
+        initialValue = 1,
+        allocationSize = 1
+)
 public class NoticeBoardEntity {
 
     @Id
     @Column(name="BOARD_ID")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "NOTICEBOARD_PK_GENERATOR")
     private Long boardId;
 
     @Column(name="BOARD_CN")
