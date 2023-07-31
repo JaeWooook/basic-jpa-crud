@@ -15,6 +15,8 @@ public class CommentDTO {
     private long boardId;
     private long commentOrd;
     private String commentCn;
+    private Integer commentLike;
+    private Integer commentDontLike;
     private String commentFstRegNm;
     private Date commentFstRegDt;
     private String commentUptRegNm;

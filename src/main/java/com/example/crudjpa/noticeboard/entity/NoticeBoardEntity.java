@@ -28,6 +28,15 @@ public class NoticeBoardEntity {
     @Column(name="BOARD_CN")
     private String boardCn;
 
+    @Column(name="BOARD_VIEWS")
+    private Integer boardViews;
+
+    @Column(name="BOARD_LIKE")
+    private Integer boardLike;
+
+    @Column(name="BOARD_DOMT_LIKE")
+    private Integer boardDontLike;
+
     @Column(name="BOARD_FST_REG_NM")
     private String boardFstRegNm;
 

@@ -29,6 +29,12 @@ public class CommentEntity {
     @Column(name="COMMENT_CN")
     private String commentCn;
 
+    @Column(name="COMMENT_LIKE")
+    private Integer commentLike;
+
+    @Column(name="COMMENT_DONT_LIKE")
+    private Integer commentDontLike;
+
     @Column(name="COMMENT_FST_REG_NM")
     private String commentFstRegNm;
 
