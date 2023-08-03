@@ -27,7 +27,7 @@ public interface NoticeBoardRepository extends JpaRepository<NoticeBoardEntity, 
     //리스트 싫어요 정렬
     List<NoticeBoardEntity> findAllByOrderByBoardDontLikeDesc();
     //리스트 최신순 정렬
-    List<NoticeBoardEntity> findAllByOrderByBoardFstRegDtDesc(LocalDateTime boardFstRegDt);
+    List<NoticeBoardEntity> findAllByOrderByBoardFstRegDtDesc();
     //게시물 상세조회
     Optional<NoticeBoardEntity> findByBoardId(Long BoardId);
 }
