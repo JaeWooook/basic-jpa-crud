@@ -25,6 +25,9 @@ public class NoticeBoardEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "NOTICEBOARD_PK_GENERATOR")
     private Long boardId;
 
+    @Column(name="BOARD_TITLE")
+    private String boardTitle;
+
     @Column(name="BOARD_CN")
     private String boardCn;
 
