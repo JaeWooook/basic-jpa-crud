@@ -1,9 +1,12 @@
 package com.example.crudjpa.noticeboard.entity;
 
+import com.example.crudjpa.comment.entity.CommentEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 @AllArgsConstructor
@@ -54,4 +57,7 @@ public class NoticeBoardEntity {
 
     @Column(name="ROW_STAT_CD")
     private String rowStatCd;
+
+    @OneToMany(mappedBy = "NOTICEBOARD")
+    private List<CommentEntity> comments = new ArrayList<CommentEntity>();
 }
