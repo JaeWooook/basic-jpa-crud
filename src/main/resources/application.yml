@@ -17,8 +17,11 @@ spring:
     password: 1234 # H2 ?? ?
   jpa:
     show-sql: true
-  hibernate:
-    ddl-auto: create-drop
+    hibernate:
+      ddl-auto: create-drop
+    properties: # property ?? ??
+      hibernate: # hibernate property ??
+        format_sql: true
   h2:
     console:
       enabled: true
@@ -32,3 +35,9 @@ spring:
     suffix: .html
     mode: HTML
     cache: false
+
+logging:
+  level: # ? package ?? ?? ??? ??? ? ??.
+#    org.hibernate.type: trace                   # ???? ??? ????? ? ? ?? ?? ??
+#    org.hibernate.SQL: debug                    # logger? ?? ?????? ?? SQL
+    org.hibernate.type.descriptor.sql: trace    # sql? ? ?? Parameter? ???.

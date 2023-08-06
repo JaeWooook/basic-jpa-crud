@@ -27,30 +27,39 @@ public class CommentEntity {
     private Long commentId;
 
     @Column(name="COMMENT_CN")
+    @NonNull
     private String commentCn;
 
     @Column(name="COMMENT_LIKE")
+    @NonNull
     private Integer commentLike;
 
     @Column(name="COMMENT_DONT_LIKE")
+    @NonNull
     private Integer commentDontLike;
 
     @Column(name="COMMENT_FST_REG_NM")
+    @NonNull
     private String commentFstRegNm;
 
     @Column(name="COMMENT_FST_REG_DT")
+    @NonNull
     private LocalDateTime commentFstRegDt;
 
     @Column(name="COMMENT_UPT_REG_NM")
+    @NonNull
     private String commentUptRegNm;
 
     @Column(name="COMMENT_UPT_REG_DT")
+    @NonNull
     private LocalDateTime commentUptRegDt;
 
     @Column(name="ROW_STAT_CD")
+    @NonNull
     private String rowStatCd;
 
     @ManyToOne(targetEntity = NoticeBoardEntity.class, fetch = FetchType.LAZY)
+    @NonNull
     @JoinColumn(name="BOARD_ID")
     private NoticeBoardEntity noticeBoardEntity;
 }

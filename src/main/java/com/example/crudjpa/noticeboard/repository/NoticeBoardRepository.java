@@ -13,8 +13,6 @@ public interface NoticeBoardRepository extends JpaRepository<NoticeBoardEntity, 
     //조회 전체 리스트 조회(최신글,조회수,게시물좋아요,게시물싫어요), 제목검색 조회, 내용검색조회, 제목+내용조회
     //게시물 상세 조회
 
-    //디폴트 게시물 전체조회 페이징처리 필요
-    List<NoticeBoardEntity> findAllByBoardId(Long boardId);
     //제목 전체 리스트조회
     List<NoticeBoardEntity> findAllByBoardTitle(String boardTitle);
     //내용 전체리스트조회

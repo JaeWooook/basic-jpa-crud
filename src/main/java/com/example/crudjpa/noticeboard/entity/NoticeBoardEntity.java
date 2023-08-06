@@ -29,35 +29,45 @@ public class NoticeBoardEntity {
     private Long boardId;
 
     @Column(name="BOARD_TITLE")
+    @NonNull
     private String boardTitle;
 
+    @NonNull
     @Column(name="BOARD_CN")
     private String boardCn;
 
+    @NonNull
     @Column(name="BOARD_VIEWS")
     private Integer boardViews;
 
+    @NonNull
     @Column(name="BOARD_LIKE")
     private Integer boardLike;
 
+    @NonNull
     @Column(name="BOARD_DOMT_LIKE")
     private Integer boardDontLike;
 
+    @NonNull
     @Column(name="BOARD_FST_REG_NM")
     private String boardFstRegNm;
 
+    @NonNull
     @Column(name="BOARD_FST_REG_DT")
     private LocalDateTime boardFstRegDt;
 
+    @NonNull
     @Column(name="BOARD_UPT_REG_NM")
     private String boardUptRegNm;
 
+    @NonNull
     @Column(name="BOARD_UPT_REG_DT")
     private LocalDateTime boardUptRegDt;
 
+    @NonNull
     @Column(name="ROW_STAT_CD")
     private String rowStatCd;
 
-    @OneToMany(mappedBy = "NOTICEBOARD")
+    @OneToMany(mappedBy = "noticeBoardEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)//매핑된 컬럼의 변수
     private List<CommentEntity> comments = new ArrayList<CommentEntity>();
 }
