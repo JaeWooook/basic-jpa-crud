@@ -7,14 +7,15 @@ import com.example.crudjpa.noticeboard.repository.NoticeBoardRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -78,8 +79,60 @@ public class NoticeBoardRepositoryTest {
     }
 
     @Test
+    @DisplayName("전체게시판리스트조회")
     public void findByAllBoardTest() {
         //when
+        String boardTitle = "제목";
+        String boardCn = "내용";
+        String writer = "mystyle730gmial.com";
+        LocalDateTime nowDate = LocalDateTime.now();
+
+        IntStream.rangeClosed(0, 10).forEach(i-> {
+            NoticeBoardEntity noticeBoardEntitySaveData = NoticeBoardEntity.builder()
+                    .boardTitle(boardTitle + i)
+                    .boardCn(boardCn + i)
+                    .boardViews(i)
+                    .boardLike(i)
+                    .boardDontLike(i)
+                    .boardFstRegNm(writer + i)
+                    .boardFstRegDt(nowDate)
+                    .boardUptRegNm(writer + i)
+                    .boardUptRegDt(nowDate)
+                    .rowStatCd("C")
+                    .build();
+
+            noticeBoardRepository.save(noticeBoardEntitySaveData);
+
+            IntStream.rangeClosed(0,10).forEach(j -> {
+                CommentEntity commentEntity = CommentEntity.builder()
+                        .commentCn("댓글내용" + j)
+                        .commentLike(j)
+                        .commentDontLike(j)
+                        .commentFstRegNm(writer + j)
+                        .commentFstRegDt(nowDate)
+                        .commentUptRegNm(writer + j)
+                        .commentUptRegDt(nowDate)
+                        .rowStatCd("C")
+                        .noticeBoardEntity(noticeBoardEntitySaveData)
+                        .build();
+                commentRepository.save(commentEntity);
+            });
+        });
+
+        //given
+        List<NoticeBoardEntity> noticeBoardEntityList = noticeBoardRepository.findAllByOrderByBoardFstRegDtDesc();
+
+        //then
+        IntStream.rangeClosed(0,10).forEach(i-> {
+            NoticeBoardEntity noticeBoardEntity = noticeBoardEntityList.get(i);
+            assertThat(noticeBoardEntity.getBoardTitle()).isEqualTo(boardTitle + i);
+            assertThat(noticeBoardEntity.getBoardCn()).isEqualTo(boardCn + i);
+        });
+    }
+
+    @Test
+    @DisplayName("게시판 상세조회")
+    public void findByBoardIdTest() {
         String boardTitle = "제목";
         String boardCn = "내용";
         String writer = "mystyle730gmial.com";
@@ -116,25 +169,27 @@ public class NoticeBoardRepositoryTest {
         });
 
         //given
-        List<NoticeBoardEntity> noticeBoardEntityList = noticeBoardRepository.findAllByOrderByBoardFstRegDtDesc();
-        List<CommentEntity> commentEntityList = commentRepository.findAll();
+        Optional<NoticeBoardEntity> noticeBoardEntity = noticeBoardRepository.findByBoardId(1L);
 
-        //then
-        NoticeBoardEntity noticeBoardEntity = noticeBoardEntityList.get(0);
-        assertThat(noticeBoardEntity.getBoardTitle()).isEqualTo(boardTitle);
-        assertThat(noticeBoardEntity.getBoardCn()).isEqualTo(boardCn);
-        List<CommentEntity> commentEntityList1 = commentRepository.findAllByNoticeBoardEntity(noticeBoardEntity);
+        //optional 사용해서 객체를 사용
+        if(noticeBoardEntity.isPresent()) {
+            NoticeBoardEntity noticeBoardEntity1 = noticeBoardEntity.get();
+            //then
+            assertThat(noticeBoardEntity1.getBoardTitle()).isEqualTo(boardTitle);
+            assertThat(noticeBoardEntity1.getBoardCn()).isEqualTo(boardCn);
+            List<CommentEntity> commentEntityList1 = commentRepository.findAllByNoticeBoardEntity(noticeBoardEntity1);
 
-        IntStream.rangeClosed(0,10).forEach(i -> {
-            assertThat(commentEntityList1.get(i).getCommentCn()).isEqualTo("댓글내용" + i);
-            assertThat(commentEntityList1.get(i).getCommentLike()).isEqualTo(i);
-            assertThat(commentEntityList1.get(i).getCommentDontLike()).isEqualTo(i);
-            assertThat(commentEntityList1.get(i).getCommentFstRegNm()).isEqualTo(writer + i);
-            assertThat(commentEntityList1.get(i).getCommentFstRegDt()).isEqualTo(nowDate);
-            assertThat(commentEntityList1.get(i).getCommentUptRegNm()).isEqualTo(writer+i);
-            assertThat(commentEntityList1.get(i).getCommentUptRegDt()).isEqualTo(nowDate);
-            assertThat(commentEntityList1.get(i).getRowStatCd()).isEqualTo("C");
+            IntStream.rangeClosed(0,10).forEach(i -> {
+                assertThat(commentEntityList1.get(i).getCommentCn()).isEqualTo("댓글내용" + i);
+                assertThat(commentEntityList1.get(i).getCommentLike()).isEqualTo(i);
+                assertThat(commentEntityList1.get(i).getCommentDontLike()).isEqualTo(i);
+                assertThat(commentEntityList1.get(i).getCommentFstRegNm()).isEqualTo(writer + i);
+                assertThat(commentEntityList1.get(i).getCommentFstRegDt()).isEqualTo(nowDate);
+                assertThat(commentEntityList1.get(i).getCommentUptRegNm()).isEqualTo(writer+i);
+                assertThat(commentEntityList1.get(i).getCommentUptRegDt()).isEqualTo(nowDate);
+                assertThat(commentEntityList1.get(i).getRowStatCd()).isEqualTo("C");
 //            assertThat(commentEntityList1.get(i).getNoticeBoardEntity()).isEqualTo(noticeBoardEntity); //이유확인
-        });
+            });
+        }
     }
 }
