@@ -14,11 +14,11 @@ public interface NoticeBoardRepository extends JpaRepository<NoticeBoardEntity, 
     //게시물 상세 조회
 
     //제목 전체 리스트조회
-    List<NoticeBoardEntity> findAllByBoardTitle(String boardTitle);
+    List<NoticeBoardEntity> findAllByBoardTitleContaining(String boardTitle);
     //내용 전체리스트조회
-    List<NoticeBoardEntity> findAllByBoardCn(String boardCn);
+    List<NoticeBoardEntity> findAllByBoardCnContaining(String boardCn);
     //제목+내용 전체리스트조회
-    List<NoticeBoardEntity> findAllByBoardTitleOrBoardCn(String boardTitle, String boardCn);
+    List<NoticeBoardEntity> findAllByBoardTitleContainingOrBoardCnContaining(String boardTitle, String boardCn);
     //리스트 좋아요 정렬
     List<NoticeBoardEntity> findAllByOrderByBoardLikeDesc();
     //리스트 싫어요 정렬
