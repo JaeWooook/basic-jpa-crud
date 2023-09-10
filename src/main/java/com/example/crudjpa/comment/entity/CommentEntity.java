@@ -3,6 +3,8 @@ package com.example.crudjpa.comment.entity;
 import com.example.crudjpa.noticeboard.entity.NoticeBoardEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -30,20 +32,20 @@ public class CommentEntity {
     @NonNull
     private String commentCn;
 
+    @Builder.Default
     @Column(name="COMMENT_LIKE")
-    @NonNull
-    private Integer commentLike;
+    private Integer commentLike = 0;
 
+    @Builder.Default
     @Column(name="COMMENT_DONT_LIKE")
-    @NonNull
-    private Integer commentDontLike;
+    private Integer commentDontLike = 0;
 
     @Column(name="COMMENT_FST_REG_NM")
     @NonNull
     private String commentFstRegNm;
 
     @Column(name="COMMENT_FST_REG_DT")
-    @NonNull
+    @CreationTimestamp
     private LocalDateTime commentFstRegDt;
 
     @Column(name="COMMENT_UPT_REG_NM")
@@ -51,11 +53,10 @@ public class CommentEntity {
     private String commentUptRegNm;
 
     @Column(name="COMMENT_UPT_REG_DT")
-    @NonNull
+    @UpdateTimestamp
     private LocalDateTime commentUptRegDt;
 
     @Column(name="ROW_STAT_CD")
-    @NonNull
     private String rowStatCd;
 
     @ManyToOne(targetEntity = NoticeBoardEntity.class, fetch = FetchType.LAZY)

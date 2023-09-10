@@ -3,6 +3,8 @@ package com.example.crudjpa.noticeboard.entity;
 import com.example.crudjpa.comment.entity.CommentEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,23 +38,23 @@ public class NoticeBoardEntity {
     @Column(name="BOARD_CN")
     private String boardCn;
 
-    @NonNull
+    @Builder.Default//객체를 생성하면서 넣어주는 기본값
     @Column(name="BOARD_VIEWS")
-    private Integer boardViews;
+    private Integer boardViews = 0;
 
-    @NonNull
+    @Builder.Default
     @Column(name="BOARD_LIKE")
-    private Integer boardLike;
+    private Integer boardLike = 0;
 
-    @NonNull
+    @Builder.Default
     @Column(name="BOARD_DOMT_LIKE")
-    private Integer boardDontLike;
+    private Integer boardDontLike = 0;
 
-    @NonNull
     @Column(name="BOARD_FST_REG_NM")
     private String boardFstRegNm;
 
-    @NonNull
+    //생성할때 자동으로 시간생성
+    @CreationTimestamp
     @Column(name="BOARD_FST_REG_DT")
     private LocalDateTime boardFstRegDt;
 
@@ -60,7 +62,8 @@ public class NoticeBoardEntity {
     @Column(name="BOARD_UPT_REG_NM")
     private String boardUptRegNm;
 
-    @NonNull
+    //업데이트할때 시간 자동으로 생성
+    @UpdateTimestamp
     @Column(name="BOARD_UPT_REG_DT")
     private LocalDateTime boardUptRegDt;
 
