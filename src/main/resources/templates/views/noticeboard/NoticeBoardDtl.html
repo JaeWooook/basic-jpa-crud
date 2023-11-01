@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" th:if="${pageFlag == 'R'}">
+
+<!--    <div class="py-5 text-center">-->
+<!--        <h2 th:text="#{page.board}">상품 상세</h2>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; 추가 &ndash;&gt;-->
+<!--    <h2 th:if="${param.status}" th:text="'저장 완료'"></h2>-->
+
+<!--    <div>-->
+<!--        <label for="boardId" th:text="#{label.board.id}">ID</label>-->
+<!--        <input type="text" id="boardId" name="boardId" class="form-control" value="1" th:value="${board.uid}" readonly>-->
+<!--    </div>-->
+<!--    <div>-->
+<!--        <label for="boardSubject" th:text="#{label.board.subject}">제목</label>-->
+<!--        <input type="text" id="boardSubject" name="boardSubject" class="form-control" value="상품A" th:value="${board.subject}" readonly>-->
+<!--    </div>-->
+<!--    <div>-->
+<!--        <label for="name" th:text="#{label.board.name}">작성자</label>-->
+<!--        <input type="text" id="name" name="name" class="form-control" value="작성자" th:value="${board.name}" readonly>-->
+<!--    </div>-->
+<!--    <div>-->
+<!--        <label for="viewcnt" th:text="#{label.board.viewcnt}">조회수</label>-->
+<!--        <input type="text" id="viewcnt" name="viewcnt" class="form-control" value="10" th:value="${board.viewcnt}" readonly>-->
+<!--    </div>-->
+
+<!--    <div>-->
+<!--        <label for="regdate" th:text="#{label.board.regdate}">등록일</label>-->
+<!--        <input type="text" id="regdate" name="regdate" class="form-control" value="10" th:value="${board.regdate}" readonly>-->
+<!--    </div>-->
+
+<!--    <div>-->
+<!--        <label for="contents" th:text="#{label.board.contents}">글 내용</label>-->
+<!--        <input type="text" id="contents" name="contents" class="form-control" value="10" th:value="${board.contents}" readonly>-->
+<!--    </div>-->
+
+<!--    <hr class="my-4">-->
+
+<!--    <div class="row">-->
+<!--        <div class="col">-->
+<!--            <button class="w-100 btn btn-primary btn-lg"-->
+<!--                    onclick="location.href='editForm.html'"-->
+<!--                    th:onclick="|location.href='@{/boards/{uid}/edit(uid=${board.uid})}'|"-->
+<!--                    type="button" th:text="#{page.updateBoard}">상품 수정</button>-->
+<!--        </div>-->
+<!--        <div class="col">-->
+<!--            <button class="w-100 btn btn-secondary btn-lg"-->
+<!--                    onclick="location.href='items.html'"-->
+<!--                    th:onclick="|location.href='@{/boards}'|"-->
+<!--                    type="button" th:text="#{button.list}">목록으로</button>-->
+<!--        </div>-->
+
+<!--        <div class="col">-->
+<!--            <button class="w-100 btn btn-secondary btn-lg"-->
+<!--                    onclick="location.href='items.html'"-->
+<!--                    th:onclick="|location.href='@{/boards/{uid}/delete(uid=${board.uid})}'|"-->
+<!--                    type="button" th:text="#{button.delete}">삭제</button>-->
+<!--        </div>-->
+<!--    </div>-->
+
+</div> <!-- /container -->
+
+<div class="container" th:if="${pageFlag == 'C'}">
+
+    <div class="py-5 text-center">
+        <h2 th:text="#{page.addBoard}">상품 등록</h2>
+    </div>
+
+<!--    <form action="item.html" th:action th:object="${board}" method="post">-->
+
+<!--        <div>-->
+<!--            <input type="hidden" id="name" class="form-control"  th:field="*{name}" value="testUser" placeholder="제목을 입력하세요.">-->
+
+<!--        </div>-->
+
+<!--        <div>-->
+<!--            <label for="subject" th:text="#{label.board.subject}">제목</label>-->
+<!--            <input type="text" id="subject" th:field="*{subject}" class="form-control" placeholder="제목을 입력하세요.">-->
+
+<!--        </div>-->
+<!--        <div>-->
+<!--            <label for="contents" th:text="#{label.board.contents}">내용</label>-->
+<!--            <textarea cols="150" rows="10" id="contents" th:field="*{contents}" class="form-control" placeholder="내용을 입력하세요.">-->
+
+<!--            </textarea>-->
+
+<!--        </div>-->
+
+<!--        <hr class="my-4">-->
+
+<!--        <div class="row">-->
+<!--            <div class="col">-->
+<!--                <button class="w-100 btn btn-primary btn-lg" type="submit" th:text="#{button.save}">저장</button>-->
+<!--            </div>-->
+<!--            <div class="col">-->
+<!--                <button class="w-100 btn btn-secondary btn-lg"-->
+<!--                        onclick="location.href='items.html'"-->
+<!--                        th:onclick="|location.href='@{/boards}'|"-->
+<!--                        type="button" th:text="#{button.cancel}">취소</button>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--    </form>-->
+
+</div> <!-- /container -->
+</body>
+</html>

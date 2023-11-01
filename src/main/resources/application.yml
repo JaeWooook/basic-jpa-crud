@@ -2,7 +2,7 @@ spring:
         profiles:
           active: local
 
-# Local ??
+# Local
 ---
 spring:
   config:
