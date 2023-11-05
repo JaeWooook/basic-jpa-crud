@@ -11,108 +11,114 @@
 <body>
 
 <div class="container" th:if="${pageFlag == 'R'}">
+    <form id="deleteForm" th:action="/api/v1/noticeboard/delete" method="post">
+        <input type="hidden" class="form-control" th:value="${board.boardId}" readonly/>
+    </form>
 
 <!--    <div class="py-5 text-center">-->
-<!--        <h2 th:text="#{page.board}">상품 상세</h2>-->
+<!--        <h2 th:text="#{page.board}">게시글 상세</h2>-->
 <!--    </div>-->
 
-<!--    &lt;!&ndash; 추가 &ndash;&gt;-->
-<!--    <h2 th:if="${param.status}" th:text="'저장 완료'"></h2>-->
+    <!-- 추가 -->
+    <h2 th:if="${param.status}" th:text="'저장 완료'"></h2>
 
-<!--    <div>-->
-<!--        <label for="boardId" th:text="#{label.board.id}">ID</label>-->
-<!--        <input type="text" id="boardId" name="boardId" class="form-control" value="1" th:value="${board.uid}" readonly>-->
-<!--    </div>-->
-<!--    <div>-->
-<!--        <label for="boardSubject" th:text="#{label.board.subject}">제목</label>-->
-<!--        <input type="text" id="boardSubject" name="boardSubject" class="form-control" value="상품A" th:value="${board.subject}" readonly>-->
-<!--    </div>-->
-<!--    <div>-->
-<!--        <label for="name" th:text="#{label.board.name}">작성자</label>-->
-<!--        <input type="text" id="name" name="name" class="form-control" value="작성자" th:value="${board.name}" readonly>-->
-<!--    </div>-->
-<!--    <div>-->
-<!--        <label for="viewcnt" th:text="#{label.board.viewcnt}">조회수</label>-->
-<!--        <input type="text" id="viewcnt" name="viewcnt" class="form-control" value="10" th:value="${board.viewcnt}" readonly>-->
-<!--    </div>-->
+    <form id="updateForm" th:action="/api/v1/noticeboard/update" th:object="${noticeBoardDTO}" method="post">
+        <div>
+            <input type="hidden" id="boardId" name="boardId" class="form-control" th:field="*${boardId}" th:value="${board.boardId}" readonly>
+        </div>
+        <div>
+            <label for="boardSubject">제목</label>
+            <input type="text" id="boardSubject" name="boardSubject" class="form-control" value="상품A" th:field="*${boardTitle}" th:value="${board.boardTitle}">
+        </div>
+        <div>
+            <label for="name">작성자</label>
+            <input type="text" id="name" name="name" class="form-control" value="작성자" th:field="*${boardUptRegNm}" th:value="${board.boardUptRegNm}">
+        </div>
+        <div>
+            <label for="viewcnt">조회수</label>
+            <input type="text" id="viewcnt" name="viewcnt" class="form-control" value="10" th:value="${board.boardViews}" readonly>
+        </div>
 
-<!--    <div>-->
-<!--        <label for="regdate" th:text="#{label.board.regdate}">등록일</label>-->
-<!--        <input type="text" id="regdate" name="regdate" class="form-control" value="10" th:value="${board.regdate}" readonly>-->
-<!--    </div>-->
+        <div>
+            <label for="like">좋아요</label>
+            <input type="text" id="like" name="like" class="form-control" value="10" th:value="${board.boardLike}" readonly>
+        </div>
+        <div>
+            <label for="dontLike">싫어요</label>
+            <input type="text" id="dontLike" name="dontLike" class="form-control" value="10" th:value="${board.boardDontLike}" readonly>
+        </div>
+        <div>
+            <label for="regdate">등록일</label>
+            <input type="text" id="regdate" name="regdate" class="form-control" value="10" th:field="*${boardUptRegDt}" th:value="${board.UptRegDt}" readonly>
+        </div>
 
-<!--    <div>-->
-<!--        <label for="contents" th:text="#{label.board.contents}">글 내용</label>-->
-<!--        <input type="text" id="contents" name="contents" class="form-control" value="10" th:value="${board.contents}" readonly>-->
-<!--    </div>-->
+        <div>
+            <label for="editContents">글 내용</label>
+            <input type="text" id="editContents" name="contents" class="form-control" value="10" th:field="*${boardCn}" th:value="${board.boardCn}">
+        </div>
+    </form>
+    <hr class="my-4">
 
-<!--    <hr class="my-4">-->
-
-<!--    <div class="row">-->
-<!--        <div class="col">-->
-<!--            <button class="w-100 btn btn-primary btn-lg"-->
-<!--                    onclick="location.href='editForm.html'"-->
-<!--                    th:onclick="|location.href='@{/boards/{uid}/edit(uid=${board.uid})}'|"-->
-<!--                    type="button" th:text="#{page.updateBoard}">상품 수정</button>-->
-<!--        </div>-->
-<!--        <div class="col">-->
-<!--            <button class="w-100 btn btn-secondary btn-lg"-->
-<!--                    onclick="location.href='items.html'"-->
-<!--                    th:onclick="|location.href='@{/boards}'|"-->
-<!--                    type="button" th:text="#{button.list}">목록으로</button>-->
-<!--        </div>-->
-
-<!--        <div class="col">-->
-<!--            <button class="w-100 btn btn-secondary btn-lg"-->
-<!--                    onclick="location.href='items.html'"-->
-<!--                    th:onclick="|location.href='@{/boards/{uid}/delete(uid=${board.uid})}'|"-->
-<!--                    type="button" th:text="#{button.delete}">삭제</button>-->
-<!--        </div>-->
-<!--    </div>-->
+    <div class="row">
+        <div class="col">
+            <button class="w-100 btn btn-primary btn-lg"
+                    type="submit" form="updateForm">게시글 수정</button>
+        </div>
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg"
+                    onclick="location.href='NoticeBoardList.html'"
+                    th:onclick="|location.href='@{/noticeboard}'|"
+                    type="button">목록으로</button>
+        </div>
+        <div class="col">
+            <button class="w-100 btn btn-primary btn-lg"
+                    type="submit" form="deleteForm">게시글 삭제</button>
+        </div>
+    </div>
 
 </div> <!-- /container -->
 
 <div class="container" th:if="${pageFlag == 'C'}">
 
-    <div class="py-5 text-center">
-        <h2 th:text="#{page.addBoard}">상품 등록</h2>
-    </div>
+<!--    <div class="py-5 text-center">-->
+<!--        <h2 th:text="#{page.addBoard}">게시글 등록</h2>-->
+<!--    </div>-->
 
-<!--    <form action="item.html" th:action th:object="${board}" method="post">-->
+    <form th:action="/api/v1/noticeboard/create" th:object="${noticeBoardDTO}" method="post">
 
-<!--        <div>-->
-<!--            <input type="hidden" id="name" class="form-control"  th:field="*{name}" value="testUser" placeholder="제목을 입력하세요.">-->
+        <div>
+            <label for="subject">제목</label>
+            <input type="text" id="subject" th:field="*{boardTitle}" class="form-control" placeholder="제목을 입력하세요.">
 
-<!--        </div>-->
+        </div>
+        <div>
+            <label for="contents">내용</label>
+            <textarea cols="150" rows="10" id="contents" th:field="*{boardCn}" class="form-control" placeholder="내용을 입력하세요.">
 
-<!--        <div>-->
-<!--            <label for="subject" th:text="#{label.board.subject}">제목</label>-->
-<!--            <input type="text" id="subject" th:field="*{subject}" class="form-control" placeholder="제목을 입력하세요.">-->
+            </textarea>
 
-<!--        </div>-->
-<!--        <div>-->
-<!--            <label for="contents" th:text="#{label.board.contents}">내용</label>-->
-<!--            <textarea cols="150" rows="10" id="contents" th:field="*{contents}" class="form-control" placeholder="내용을 입력하세요.">-->
+        </div>
 
-<!--            </textarea>-->
+        <div>
+            <label for="registerNm">작성자 이름</label>
+            <input type="text" id="registerNm" class="form-control"  th:field="*{boardFstRegNm}" placeholder="작성자 이름을 입력하세요.">
+        </div>
 
-<!--        </div>-->
+        <hr class="my-4">
 
-<!--        <hr class="my-4">-->
+        <div class="row">
+            <div class="col">
+                <button class="w-100 btn btn-primary btn-lg" type="submit">게시글 저장</button>
+            </div>
+            <div class="col">
+                <button class="w-100 btn btn-secondary btn-lg"
+                        onclick="location.href='NoticeBoardList.html'"
+                        th:onclick="|location.href='@{/noticeboard}'|"
+                        type="button">목록으로</button>
+            </div>
+        </div>
 
-<!--        <div class="row">-->
-<!--            <div class="col">-->
-<!--                <button class="w-100 btn btn-primary btn-lg" type="submit" th:text="#{button.save}">저장</button>-->
-<!--            </div>-->
-<!--            <div class="col">-->
-<!--                <button class="w-100 btn btn-secondary btn-lg"-->
-<!--                        onclick="location.href='items.html'"-->
-<!--                        th:onclick="|location.href='@{/boards}'|"-->
-<!--                        type="button" th:text="#{button.cancel}">취소</button>-->
-<!--            </div>-->
-<!--        </div>-->
-
-<!--    </form>-->
+    </form>
 
 </div> <!-- /container -->
 </body>

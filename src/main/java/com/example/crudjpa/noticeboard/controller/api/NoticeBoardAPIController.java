@@ -1,6 +1,7 @@
 package com.example.crudjpa.noticeboard.controller.api;
 
-import com.example.crudjpa.noticeboard.dto.NoticeBoardDTO;
+import com.example.crudjpa.noticeboard.dto.request.BoardRequestDTO;
+import com.example.crudjpa.noticeboard.dto.response.BoardResponseDTO;
 import com.example.crudjpa.noticeboard.service.NoticeBoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +18,12 @@ public class NoticeBoardAPIController {
 
     /**
      * 게시글 생성
-     * @param noticeBoardRequestDTO
+     * @param boardRequestDTO
      * @return
      */
     @PostMapping("/api/v1/noticeboard/create")
-    public ResponseEntity<String> createNoticeBoard(@RequestBody NoticeBoardDTO.Request noticeBoardRequestDTO) {
-        boolean success = noticeBoardService.createNoticeBoard(noticeBoardRequestDTO);
+    public ResponseEntity<String> createNoticeBoard(@RequestBody BoardRequestDTO boardRequestDTO) {
+        boolean success = noticeBoardService.createNoticeBoard(boardRequestDTO);
         if(success) {
             return ResponseEntity.ok("success");
         }
@@ -31,23 +32,23 @@ public class NoticeBoardAPIController {
 
     /**
      * 게시글 수정
-     * @param noticeBoardRequestDTO
+     * @param boardRequestDTO
      * @return
      */
     @PutMapping("/api/v1/noticeboard/update")
-    public ResponseEntity<String> updateNoticeBoard(@RequestBody NoticeBoardDTO.Request noticeBoardRequestDTO) {
+    public ResponseEntity<String> updateNoticeBoard(@RequestBody BoardRequestDTO boardRequestDTO) {
 
         return ResponseEntity.ok("success");
     }
 
     /**
      * 게시글 삭제
-     * @param noticeBoardRequestDTO
+     * @param boardRequestDTO
      * @return
      */
     @DeleteMapping("/api/v1/noticeboard/delete")
-    public ResponseEntity<String> deleteNoticeBoard(@RequestBody NoticeBoardDTO.Request noticeBoardRequestDTO) {
-        boolean success = noticeBoardService.deleteNoticeBoard(noticeBoardRequestDTO);
+    public ResponseEntity<String> deleteNoticeBoard(@RequestBody BoardRequestDTO boardRequestDTO) {
+        boolean success = noticeBoardService.deleteNoticeBoard(boardRequestDTO);
         if(success) {
             return ResponseEntity.ok("success");
         }
@@ -59,9 +60,9 @@ public class NoticeBoardAPIController {
      * @return
      */
     @GetMapping("/api/v1/noticeboard/basic-list")
-    public ResponseEntity<List<NoticeBoardDTO.Response>> selectNoticeBoardList(){
-        List<NoticeBoardDTO.Response> noticeBoardResponseDTO = noticeBoardService.selectNoticeBoardList();
+    public ResponseEntity<List<BoardResponseDTO>> selectNoticeBoardList(){
+        List<BoardResponseDTO> boardResponseDTO = noticeBoardService.selectNoticeBoardList();
 
-        return ResponseEntity.ok(noticeBoardResponseDTO);
+        return ResponseEntity.ok(boardResponseDTO);
     }
 }

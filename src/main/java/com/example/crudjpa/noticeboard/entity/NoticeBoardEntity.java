@@ -1,6 +1,7 @@
 package com.example.crudjpa.noticeboard.entity;
 
 import com.example.crudjpa.comment.entity.CommentEntity;
+import com.example.crudjpa.noticeboard.dto.response.BoardResponseDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -58,7 +59,7 @@ public class NoticeBoardEntity {
     @Column(name="BOARD_FST_REG_DT")
     private LocalDateTime boardFstRegDt;
 
-    @NonNull
+//    @NonNull
     @Column(name="BOARD_UPT_REG_NM")
     private String boardUptRegNm;
 
@@ -67,7 +68,7 @@ public class NoticeBoardEntity {
     @Column(name="BOARD_UPT_REG_DT")
     private LocalDateTime boardUptRegDt;
 
-    @NonNull
+//    @NonNull
     @Column(name="ROW_STAT_CD")
     private String rowStatCd;
 

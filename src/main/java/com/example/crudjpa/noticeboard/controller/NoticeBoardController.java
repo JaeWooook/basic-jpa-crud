@@ -1,12 +1,11 @@
 package com.example.crudjpa.noticeboard.controller;
 
-import com.example.crudjpa.noticeboard.dto.NoticeBoardDtlDTO;
+import com.example.crudjpa.noticeboard.dto.request.BoardDtlRequestDTO;
+import com.example.crudjpa.noticeboard.dto.request.BoardRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,13 +27,17 @@ public class NoticeBoardController {
      * @return
      */
     @GetMapping("/noticeboard/detail")
-    public String moveNoticeBoardDetailPage(NoticeBoardDtlDTO.Request noticeBoardDtlDTO, Model model) {
-        String pageFlag = noticeBoardDtlDTO.getBoardFlag();
+    public String moveNoticeBoardDetailPage(BoardDtlRequestDTO boardDtlRequestDTO, Model model, BoardRequestDTO boardRequestDTO) {
+        String pageFlag = boardDtlRequestDTO.getBoardFlag();
 
         //crete
-
+        if("C".equals(pageFlag)) {
+            model.addAttribute("noticeBoardDTO", boardRequestDTO);
+        }
         //read
-
+        if("R".equals(pageFlag)) {
+            model.addAttribute("noticeBoardDTO", boardRequestDTO);
+        }
         //update
         model.addAttribute("pageFlag", pageFlag);
         return "views/noticeboard/NoticeBoardDtl";

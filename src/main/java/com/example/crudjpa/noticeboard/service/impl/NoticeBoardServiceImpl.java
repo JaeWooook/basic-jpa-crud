@@ -1,14 +1,18 @@
 package com.example.crudjpa.noticeboard.service.impl;
 
-import com.example.crudjpa.noticeboard.dto.NoticeBoardDTO;
+import com.example.crudjpa.noticeboard.dto.request.BoardRequestDTO;
+import com.example.crudjpa.noticeboard.dto.response.BoardResponseDTO;
 import com.example.crudjpa.noticeboard.entity.NoticeBoardEntity;
 import com.example.crudjpa.noticeboard.repository.NoticeBoardRepository;
 import com.example.crudjpa.noticeboard.service.NoticeBoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,12 +22,12 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
     private final NoticeBoardRepository noticeBoardRepository;
 
     @Override
-    public boolean createNoticeBoard(NoticeBoardDTO.Request noticeBoardRequestDTO) {
+    public boolean createNoticeBoard(BoardRequestDTO boardRequestDTO) {
         NoticeBoardEntity noticeBoardEntity = NoticeBoardEntity.builder()
-                .boardTitle(noticeBoardRequestDTO.getBoardTitle())
-                .boardCn(noticeBoardRequestDTO.getBoardCn())
-                .boardFstRegNm(noticeBoardRequestDTO.getBoardFstRegNm())
-                .boardUptRegNm(noticeBoardRequestDTO.getBoardFstRegNm())
+                .boardTitle(boardRequestDTO.getBoardTitle())
+                .boardCn(boardRequestDTO.getBoardCn())
+                .boardFstRegNm(boardRequestDTO.getBoardFstRegNm())
+                .boardUptRegNm(boardRequestDTO.getBoardFstRegNm())
                 .rowStatCd("C")
                 .build();
         noticeBoardRepository.save(noticeBoardEntity);
@@ -46,16 +50,31 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
 //    }
 
     @Override
-    public boolean deleteNoticeBoard(NoticeBoardDTO.Request noticeBoardRequestDTO) {
-        noticeBoardRepository.deleteById(noticeBoardRequestDTO.getBoardId());
+    public boolean deleteNoticeBoard(BoardRequestDTO boardRequestDTO) {
+        noticeBoardRepository.deleteById(boardRequestDTO.getBoardId());
 
-        return !noticeBoardRepository.existsById(noticeBoardRequestDTO.getBoardId());
+        return !noticeBoardRepository.existsById(boardRequestDTO.getBoardId());
     }
 
     @Override
-    public List<NoticeBoardDTO.Response> selectNoticeBoardList() {
-        List<NoticeBoardDTO.Response> noticeBoardDTOList = new ArrayList<NoticeBoardDTO.Response>();
+    public List<BoardResponseDTO> selectNoticeBoardList() {
+        List<NoticeBoardEntity> noticeBoardDTOList = noticeBoardRepository.findAllByOrderByBoardFstRegDtDesc();
 
-        return noticeBoardDTOList;
+
+        return noticeBoardDTOList.stream()
+                .map(BoardResponseDTO::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public BoardResponseDTO selectNoticeBoardDtl(BoardRequestDTO boardRequestDTO) {
+        Optional<NoticeBoardEntity> resultNoticeBoardEntity = noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId());
+
+        NoticeBoardEntity transNoticeBoardEntity = new NoticeBoardEntity();
+        if(resultNoticeBoardEntity.isPresent()) {
+            transNoticeBoardEntity = resultNoticeBoardEntity.get();
+        }
+
+        return ObjectUtils.isEmpty(transNoticeBoardEntity) ? BoardResponseDTO.toDTO(transNoticeBoardEntity) : null;
     }
 }
