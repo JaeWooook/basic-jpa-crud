@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,7 +19,6 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
 
     //생성자 주입 롬복 어노테이션
     private final NoticeBoardRepository noticeBoardRepository;
-
     @Override
     public boolean createNoticeBoard(BoardRequestDTO boardRequestDTO) {
         NoticeBoardEntity noticeBoardEntity = NoticeBoardEntity.builder()
@@ -70,11 +68,12 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
     public BoardResponseDTO selectNoticeBoardDtl(BoardRequestDTO boardRequestDTO) {
         Optional<NoticeBoardEntity> resultNoticeBoardEntity = noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId());
 
-        NoticeBoardEntity transNoticeBoardEntity = new NoticeBoardEntity();
+        //protected level 이라서 entity 빈생성자 생성이 안된다.
         if(resultNoticeBoardEntity.isPresent()) {
-            transNoticeBoardEntity = resultNoticeBoardEntity.get();
+            NoticeBoardEntity transNoticeBoardEntity = resultNoticeBoardEntity.get();
+            return ObjectUtils.isEmpty(transNoticeBoardEntity) ? BoardResponseDTO.toDTO(transNoticeBoardEntity) : null;
         }
 
-        return ObjectUtils.isEmpty(transNoticeBoardEntity) ? BoardResponseDTO.toDTO(transNoticeBoardEntity) : null;
+        return null;
     }
 }

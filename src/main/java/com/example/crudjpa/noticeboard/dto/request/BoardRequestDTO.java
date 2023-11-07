@@ -6,7 +6,7 @@ import lombok.*;
 
 @Data
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 @ToString
 public class BoardRequestDTO {

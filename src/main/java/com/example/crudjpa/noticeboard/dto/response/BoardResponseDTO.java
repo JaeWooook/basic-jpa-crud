@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 @ToString
 public class BoardResponseDTO {

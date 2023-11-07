@@ -4,7 +4,7 @@ import lombok.*;
 
 @Data
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @Getter
@@ -12,5 +12,5 @@ public class BoardDtlRequestDTO {
     //C R U
     @NonNull
     private String boardFlag;
-    private long boardId;
+//    private long boardId;
 }

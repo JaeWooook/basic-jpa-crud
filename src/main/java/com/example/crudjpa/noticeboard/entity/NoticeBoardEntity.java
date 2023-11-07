@@ -1,7 +1,6 @@
 package com.example.crudjpa.noticeboard.entity;
 
 import com.example.crudjpa.comment.entity.CommentEntity;
-import com.example.crudjpa.noticeboard.dto.response.BoardResponseDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,7 +12,7 @@ import java.util.ArrayList;
 
 @Entity
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Getter
 @Setter
