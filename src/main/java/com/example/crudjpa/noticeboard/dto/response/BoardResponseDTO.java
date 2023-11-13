@@ -32,7 +32,7 @@ public class BoardResponseDTO {
                 .boardTitle(noticeBoardEntity.getBoardTitle())
                 .boardCn(noticeBoardEntity.getBoardCn())
                 .boardViews(noticeBoardEntity.getBoardViews())
-                .boardLike(noticeBoardEntity.getBoardViews())
+                .boardLike(noticeBoardEntity.getBoardLike())
                 .boardDontLike(noticeBoardEntity.getBoardDontLike())
                 .boardFstRegNm(noticeBoardEntity.getBoardFstRegNm())
                 .boardFstRegDt(noticeBoardEntity.getBoardFstRegDt())

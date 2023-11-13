@@ -19,9 +19,10 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: create-drop
-    properties: # property ?? ??
-      hibernate: # hibernate property ??
+    properties:
+      hibernate:
         format_sql: true
+    defer-datasource-initialization: true #데이터베이스 생성전 인서트실행방지
   h2:
     console:
       enabled: true
@@ -35,6 +36,9 @@ spring:
     suffix: .html
     mode: HTML
     cache: false
+  sql:
+    init:
+      data-locations: classpath:data.sql # 데이터베이스 기본값 추가하기위함
 
 logging:
   level: # ? package ?? ?? ??? ??? ? ??.

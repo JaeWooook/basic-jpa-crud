@@ -47,7 +47,7 @@ public class NoticeBoardEntity {
     private Integer boardLike = 0;
 
     @Builder.Default
-    @Column(name="BOARD_DOMT_LIKE")
+    @Column(name="BOARD_DONT_LIKE")
     private Integer boardDontLike = 0;
 
     @Column(name="BOARD_FST_REG_NM")
