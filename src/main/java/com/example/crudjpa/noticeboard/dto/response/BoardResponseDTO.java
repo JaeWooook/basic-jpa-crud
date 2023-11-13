@@ -25,6 +25,7 @@ public class BoardResponseDTO {
     private LocalDateTime boardUptRegDt;
     private String rowStatCd;
     private List<CommentEntity> comments;
+    private Integer commentsCnt;
 
     public static BoardResponseDTO toDTO (NoticeBoardEntity noticeBoardEntity) {
         return BoardResponseDTO.builder().boardId(noticeBoardEntity.getBoardId())
@@ -37,6 +38,7 @@ public class BoardResponseDTO {
                 .boardFstRegDt(noticeBoardEntity.getBoardFstRegDt())
                 .boardUptRegNm(noticeBoardEntity.getBoardUptRegNm())
                 .boardUptRegDt(noticeBoardEntity.getBoardUptRegDt())
+                .commentsCnt(noticeBoardEntity.getComments().size())
                 .rowStatCd(noticeBoardEntity.getRowStatCd())
                 .build();
     }

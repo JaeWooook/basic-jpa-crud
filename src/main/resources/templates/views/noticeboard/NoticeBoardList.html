@@ -30,7 +30,7 @@
             <!--/* 리스트 */-->
             <table class="tb tb_col">
                 <colgroup>
-                    <col style="width:50px;"/><col style="width:7.5%;"/><col style="width:auto;"/><col style="width:10%;"/><col style="width:15%;"/><col style="width:7.5%;"/>
+                    <col style="width:50px;"/><col style="width:7.5%;"/><col style="width:auto;"/><col style="width:10%;"/><col style="width:15%;"/><col style="width:7.5%;"/><col style="width:7.5%;"/><col style="width:7.5%;"/><col style="width:7.5%;"/>
                 </colgroup>
                 <thead>
                 <tr>
@@ -40,19 +40,26 @@
                     <th scope="col">작성자</th>
                     <th scope="col">등록일</th>
                     <th scope="col">조회</th>
+                    <th scope="col">좋아요</th>
+                    <th scope="col">싫어요</th>
+                    <th scope="col">댓글수</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:if="${not #lists.isEmpty( posts )}" th:each="row, status : ${posts}">
+                <tr th:if="${not #lists.isEmpty( noticeBoardList )}" th:each="row, status : ${noticeBoardList}">
                     <td><input type="checkbox"/></td>
-                    <td th:text="${row.noticeYn == false ? (status.size - status.index) : '공지'}"></td>
-                    <td class="tl"><a th:href="@{/noticeboard/detail( id=${row.id}, boardFlag = 'R' )}" th:text="${row.title}"></a></td>
-                    <td th:text="${row.writer}"></td>
-                    <td th:text="${#temporals.format( row.createdDate, 'yyyy-MM-dd HH:mm' )}"></td>
-                    <td th:text="${row.viewCnt}"></td>
+<!--                    <td th:text="${row.noticeYn == false ? (status.size - status.index) : '공지'}"></td>-->
+                    <td th:text="${row.boardId}"></td>
+                    <td class="tl"><a th:href="@{/noticeboard/detail( id=${row.boardId}, boardFlag = 'R' )}" th:text="${row.boardTitle}"></a></td>
+                    <td th:text="${row.boardFstRegNm}"></td>
+                    <td th:text="${#temporals.format( row.boardFstRegDt, 'yyyy-MM-dd HH:mm' )}"></td>
+                    <td th:text="${row.boardViews}"></td>
+                    <td th:text="${row.boardLike}"></td>
+                    <td th:text="${row.boardDontLike}"></td>
+                    <td th:text="${row.commentsCnt}"></td>
                 </tr>
 
-                <tr th:unless="${not #lists.isEmpty( posts )}">
+                <tr th:unless="${not #lists.isEmpty( noticeBoardList )}">
                     <td colspan="5">
                         <div class="no_data_msg">검색된 결과가 없습니다.</div>
                     </td>
