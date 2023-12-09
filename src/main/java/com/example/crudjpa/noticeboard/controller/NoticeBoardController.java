@@ -3,7 +3,6 @@ package com.example.crudjpa.noticeboard.controller;
 import com.example.crudjpa.noticeboard.dto.request.BoardDtlRequestDTO;
 import com.example.crudjpa.noticeboard.dto.request.BoardRequestDTO;
 import com.example.crudjpa.noticeboard.dto.response.BoardDtlResponseDTO;
-import com.example.crudjpa.noticeboard.dto.response.BoardResponseDTO;
 import com.example.crudjpa.noticeboard.service.NoticeBoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -44,7 +43,8 @@ public class NoticeBoardController {
         }
         //read
         if("R".equals(boardDtlResponseDTO.getBoardFlag())) {
-            model.addAttribute("noticeBoardDTO", boardRequestDTO);
+            //boardId 예외처리필
+            model.addAttribute("boardResponseDTO", noticeBoardService.selectNoticeBoardDtl(boardDtlRequestDTO));
         }
         //update
         model.addAttribute("pageFlag", boardDtlResponseDTO.getBoardFlag());
