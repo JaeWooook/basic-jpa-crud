@@ -1,5 +1,6 @@
 package com.example.crudjpa.noticeboard.service;
 
+import com.example.crudjpa.noticeboard.dto.request.BoardDtlRequestDTO;
 import com.example.crudjpa.noticeboard.dto.request.BoardRequestDTO;
 import com.example.crudjpa.noticeboard.dto.response.BoardResponseDTO;
 
@@ -9,11 +10,11 @@ public interface NoticeBoardService {
 
     public boolean createNoticeBoard(BoardRequestDTO boardRequestDTO);
 
-//    public boolean updateNoticeBoard(NoticeBoardDTO.Request noticeBoardResponseDTO);
+    public boolean updateNoticeBoard(BoardRequestDTO noticeBoardResponseDTO);
 
     public boolean deleteNoticeBoard(BoardRequestDTO boardRequestDTO);
 
     public List<BoardResponseDTO> selectNoticeBoardList();
 
-    public BoardResponseDTO selectNoticeBoardDtl(BoardRequestDTO boardRequestDTO);
+    public BoardResponseDTO selectNoticeBoardDtl(BoardDtlRequestDTO boardDtlRequestDTO);
 }
