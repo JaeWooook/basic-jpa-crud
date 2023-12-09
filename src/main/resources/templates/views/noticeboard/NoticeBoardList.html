@@ -50,7 +50,7 @@
                     <td><input type="checkbox"/></td>
 <!--                    <td th:text="${row.noticeYn == false ? (status.size - status.index) : '공지'}"></td>-->
                     <td th:text="${row.boardId}"></td>
-                    <td class="tl"><a th:href="@{/noticeboard/detail( id=${row.boardId}, boardFlag = 'R' )}" th:text="${row.boardTitle}"></a></td>
+                    <td class="tl"><a th:href="@{/noticeboard/detail( boardId=${row.boardId}, boardFlag = 'R' )}" th:text="${row.boardTitle}"></a></td>
                     <td th:text="${row.boardFstRegNm}"></td>
                     <td th:text="${#temporals.format( row.boardFstRegDt, 'yyyy-MM-dd HH:mm' )}"></td>
                     <td th:text="${row.boardViews}"></td>

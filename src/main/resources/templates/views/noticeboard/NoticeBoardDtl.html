@@ -10,60 +10,70 @@
     <title>게시판 상세페이지</title>
 </head>
 <body>
-
+<input type="hidden" id="pageFlag" th:value="${pageFlag}" readonly>
 <div class="container" th:if="${pageFlag == 'R'}">
-    <form id="deleteForm" th:action="|/api/v1/noticeboard/delete|" method="post">
-        <input type="hidden" class="form-control" th:value="${board.boardId}" readonly/>
-    </form>
+<!--    <form id="deleteForm" th:action="|/api/v1/noticeboard/delete|" method="post">-->
+<!--        <input type="hidden" class="form-control" th:value="${boardResponseDTO.boardId}" readonly/>-->
+<!--    </form>-->
 
 <!--    <div class="py-5 text-center">-->
 <!--        <h2 th:text="#{page.board}">게시글 상세</h2>-->
 <!--    </div>-->
 
     <!-- 추가 -->
-    <h2 th:if="${param.status}" th:text="'저장 완료'"></h2>
+<!--    <h2 th:if="${param.status}" th:text="'저장 완료'"></h2>-->
 
-    <form id="updateForm" th:object="${noticeBoardDTO}" method="post">
+    <form id="updateForm" th:object="${boardResponseDTO}" method="post">
         <div>
-            <input type="hidden" id="boardId" name="boardId" class="form-control" th:field="*${boardId}" th:value="${board.boardId}" readonly>
+            <input type="hidden" id="boardId" name="boardId" class="form-control" th:field="*{boardId}" th:value="${boardResponseDTO.boardId}" readonly>
         </div>
         <div>
-            <label for="boardSubject">제목</label>
-            <input type="text" id="boardSubject" name="boardSubject" class="form-control" value="상품A" th:field="*${boardTitle}" th:value="${board.boardTitle}">
+            <label for="updateTitle">제목</label>
+            <input type="text" id="updateTitle" name="boardSubject" class="form-control" value="상품A" th:field="*{boardTitle}" th:value="${boardResponseDTO.boardTitle}">
         </div>
         <div>
             <label for="name">작성자</label>
-            <input type="text" id="name" name="name" class="form-control" value="작성자" th:field="*${boardUptRegNm}" th:value="${board.boardUptRegNm}">
+            <input type="text" id="name" name="name" class="form-control" value="작성자" th:value="${boardResponseDTO.boardFstRegNm}" readonly>
+        </div>
+        <div th:if="${boardResponseDTO.boardUptRegNm != ''}">
+            <label from="uptName">수정자</label>
+            <input type="text" id="uptName" name="uptName" class="form-control" value="수정자" th:field="*{boardUptRegNm}" th:value="${boardResponseDTO.boardUptRegNm}">
+        </div>
+        <div th:if="${boardResponseDTO.boardUptRegNm == ''}">
+            <label from="newUptName">수정자</label>
+            <input type="text" id="newUptName" name="uptName" class="form-control" value="수정자" th:field="*{boardUptRegNm}">
         </div>
         <div>
             <label for="viewcnt">조회수</label>
-            <input type="text" id="viewcnt" name="viewcnt" class="form-control" value="10" th:value="${board.boardViews}" readonly>
+            <input type="text" id="viewcnt" name="viewcnt" class="form-control" value="10" th:value="${boardResponseDTO.boardViews}" readonly>
         </div>
 
         <div>
             <label for="like">좋아요</label>
-            <input type="text" id="like" name="like" class="form-control" value="10" th:value="${board.boardLike}" readonly>
+            <input type="text" id="like" name="like" class="form-control" value="10" th:value="${boardResponseDTO.boardLike}" readonly>
         </div>
         <div>
             <label for="dontLike">싫어요</label>
-            <input type="text" id="dontLike" name="dontLike" class="form-control" value="10" th:value="${board.boardDontLike}" readonly>
+            <input type="text" id="dontLike" name="dontLike" class="form-control" value="10" th:value="${boardResponseDTO.boardDontLike}" readonly>
         </div>
         <div>
             <label for="regdate">등록일</label>
-            <input type="text" id="regdate" name="regdate" class="form-control" value="10" th:field="*${boardUptRegDt}" th:value="${board.UptRegDt}" readonly>
+            <input type="text" id="regdate" name="regdate" class="form-control" value="10" th:value="${boardResponseDTO.boardFstRegDt}" readonly>
         </div>
-
+        <div th:if="${boardResponseDTO.boardUptRegDt != '' and boardResponseDTO.boardUptRegDt != null}">
+            <label for="uptRegDate">최근 수정일</label>
+            <input type="text" id="uptRegDate" name="uptRegDate" class="form-control" value="10" th:value="${boardResponseDTO.boardUptRegDt}" readonly>
+        </div>
         <div>
             <label for="editContents">글 내용</label>
-            <input type="text" id="editContents" name="contents" class="form-control" value="10" th:field="*${boardCn}" th:value="${board.boardCn}">
+            <input type="text" id="editContents" name="contents" class="form-control" value="10" th:field="*{boardCn}" th:value="${boardResponseDTO.boardCn}">
         </div>
     </form>
     <hr class="my-4">
 
     <div class="row">
         <div class="col">
-            <button class="w-100 btn btn-primary btn-lg"
-                    type="button" form="updateForm" id="updateSaveBtn">게시글 수정</button>
+            <button class="w-100 btn btn-primary btn-lg" type="button" id="updateSaveBtn">게시글 수정</button>
         </div>
         <div class="col">
             <button class="w-100 btn btn-secondary btn-lg"
@@ -72,8 +82,7 @@
                     type="button">목록으로</button>
         </div>
         <div class="col">
-            <button class="w-100 btn btn-primary btn-lg"
-                    type="button" form="deleteForm" id="deleteSaveBtn">게시글 삭제</button>
+            <button class="w-100 btn btn-primary btn-lg" type="button" id="deleteSaveBtn">게시글 삭제</button>
         </div>
     </div>
 
@@ -125,20 +134,28 @@
 </body>
 </html>
 <script th:inline="javascript">
-    document.getElementById("createSaveBtn").addEventListener('click', createSave);
+    const pageFlag = document.getElementById("pageFlag").value;
+
+    if(pageFlag == "C") {
+        document.getElementById("createSaveBtn").addEventListener('click', createEvent);
+    }
+    if(pageFlag == "R") {
+        document.getElementById("updateSaveBtn").addEventListener('click', updateEvent);
+        document.getElementById("deleteSaveBtn").addEventListener('click', deleteEvent);
+    }
 
     /**
      * 게시글 등록에서 저장 버튼 클릭시 이벤트
      */
-    function createSave() {
-        // const createForm = document.getElementById("createForm");
+    function createEvent() {
         const title = document.getElementById("subject").value;
         const contents = document.getElementById("contents").value;
         const fstRegNm = document.getElementById("registerNm").value;
 
         //빈값 검증
-        if(title == "" || contents == "" || fstRegNm == "") {
+        if(title === "" || contents === "" || fstRegNm === "") {
             window.alert("빈칸 없이 입력 바랍니다.");
+            return;
         }
 
         const payload = {boardTitle:title, boardCn:contents, boardFstRegNm:fstRegNm};
@@ -161,5 +178,73 @@
             .then((response) => console.log(response))
             .catch((error) => console.log(error.message))
 
+    }
+
+    /**
+     * 게시글 읽기 : 수정 버튼 클릭시 이벤트
+     */
+    function updateEvent() {
+        const id = document.getElementById('boardId').value;
+        const title = document.getElementById('updateTitle').value;
+        const editContetns = document.getElementById('editContents').value;
+        const uptRegNm = document.getElementById('uptName').value == null ? document.getElementById('newUptName').value : document.getElementById('uptName').value;
+
+        //입력 필수값 예외처리
+        if(id === '' || title === '' || editContetns === '' || uptRegNm === '') {
+            window.alert("빈칸 없이 입력 바랍니다.");
+            return;
+        }
+        const payload = {boardId : id, boardTitle : title, boardCn : editContetns, boardUptRegNm : uptRegNm};
+        const url = '/api/v1/noticeboard/update';
+
+        fetch(url, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        })
+            .then((response) => {
+                if(response.ok) {
+                    window.alert("게시글 수정 완료되었습니다.");
+                    window.location.replace("/noticeboard");
+                } else {
+                    throw new Error(`${response.status} 에러가 발생했습니다.`);
+                }
+            })
+            .then((response) => console.log(response))
+            .catch((error) => console.log(error.message))
+    }
+
+    /**
+     * 게시글 읽기 : 삭제 버튼 클릭시 이벤트
+     */
+    function deleteEvent() {
+        const id = document.getElementById('boardId').value;
+
+        if(id === "") {
+            window.alert("빈칸없이 입력 바랍니다.");
+            return;
+        }
+        const payload = {boardId : id};
+        const url = "/api/v1/noticeboard/delete";
+
+        fetch(url, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        })
+            .then((response) => {
+                if(response.ok) {
+                    window.alert("게시글 삭제 완료되었습니다.");
+                    window.location.replace("/noticeboard");
+                } else {
+                    throw new Error(`${response.status} 에러가 발생했습니다.`);
+                }
+            })
+            .then((response) => console.log(response))
+            .catch((error) => console.log(error.message))
     }
 </script>
