@@ -4,6 +4,7 @@ import com.example.crudjpa.comment.entity.CommentEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 @Builder
 @Getter
 @Setter
+@DynamicUpdate
 @Table(name="NOTICEBOARD")
 @SequenceGenerator(
         name = "NOTICEBOARD_PK_GENERATOR",
@@ -73,4 +75,16 @@ public class NoticeBoardEntity {
 
     @OneToMany(mappedBy = "noticeBoardEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)//매핑된 컬럼의 변수
     private List<CommentEntity> comments = new ArrayList<CommentEntity>();
+
+    public void addComment(CommentEntity commentEntity) {
+        this.comments.add(commentEntity);
+        commentEntity.setNoticeBoard(this);
+    }
+
+    public void updateNoticeBoard(String boardTitle, String boardCn, String boardUptRegNm, String rowStatCd) {
+        this.boardTitle = boardTitle;
+        this.boardCn = boardCn;
+        this.boardUptRegNm = boardUptRegNm;
+        this.rowStatCd = rowStatCd;
+    }
 }

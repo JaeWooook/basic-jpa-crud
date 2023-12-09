@@ -4,6 +4,7 @@ import com.example.crudjpa.noticeboard.entity.NoticeBoardEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Builder
+@DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)// 기본 생성자 default 생성자 만든다. 엔티티 프록시 객체를 사용하기 위함
 @AllArgsConstructor// 생성된 모든 파라미터를 갖는 생성자를 만든다.
 @SequenceGenerator(
@@ -63,4 +65,8 @@ public class CommentEntity {
     @NonNull
     @JoinColumn(name="BOARD_ID")
     private NoticeBoardEntity noticeBoardEntity;
+
+    public void setNoticeBoard (NoticeBoardEntity noticeBoardEntity) {
+        this.noticeBoardEntity = noticeBoardEntity;
+    }
 }
