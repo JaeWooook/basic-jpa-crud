@@ -35,10 +35,13 @@ public class NoticeBoardAPIController {
      * @param boardRequestDTO
      * @return
      */
-    @PutMapping("/api/v1/noticeboard/update")
+    @PatchMapping("/api/v1/noticeboard/update")
     public ResponseEntity<String> updateNoticeBoard(@RequestBody BoardRequestDTO boardRequestDTO) {
-
-        return ResponseEntity.ok("success");
+        boolean success = noticeBoardService.updateNoticeBoard(boardRequestDTO);
+        if(success) {
+            return ResponseEntity.ok("success");
+        }
+        return ResponseEntity.ok("fail");
     }
 
     /**
