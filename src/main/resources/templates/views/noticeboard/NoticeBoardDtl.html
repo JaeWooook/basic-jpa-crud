@@ -84,6 +84,10 @@
         <div class="col">
             <button class="w-100 btn btn-primary btn-lg" type="button" id="deleteSaveBtn">게시글 삭제</button>
         </div>
+        <div class="col">
+            <button type="button" id="likeBtn">좋아요</button>
+            <button type="button" id="dontLikeBtn">싫어요</button>
+        </div>
     </div>
 
 </div> <!-- /container -->
@@ -135,6 +139,8 @@
 </html>
 <script th:inline="javascript">
     const pageFlag = document.getElementById("pageFlag").value;
+    let likeChk = false;
+    let dontLikeChk = false;
 
     if(pageFlag == "C") {
         document.getElementById("createSaveBtn").addEventListener('click', createEvent);
@@ -142,6 +148,8 @@
     if(pageFlag == "R") {
         document.getElementById("updateSaveBtn").addEventListener('click', updateEvent);
         document.getElementById("deleteSaveBtn").addEventListener('click', deleteEvent);
+        document.getElementById("likeBtn").addEventListener('click', likeEvent);
+        document.getElementById("dontLikeBtn").addEventListener('click', dontLikeEvent);
     }
 
     /**
@@ -240,6 +248,78 @@
                 if(response.ok) {
                     window.alert("게시글 삭제 완료되었습니다.");
                     window.location.replace("/noticeboard");
+                } else {
+                    throw new Error(`${response.status} 에러가 발생했습니다.`);
+                }
+            })
+            .then((response) => console.log(response))
+            .catch((error) => console.log(error.message))
+    }
+
+    /**
+     * 좋아요 클릭 이벤트
+     */
+    function likeEvent() {
+        const id = document.getElementById('boardId').value;
+        let url = "/api/v1/noticeboard/addlike";
+
+        if(likeChk) {
+            url = "/api/v1/noticeboard/cancel-like";
+        }
+
+        const payload = {boardId : id};
+        fetch(url, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        })
+            .then((response) => {
+                if(response.ok) {
+                    if(likeChk) {
+                        window.alert("게시글 좋아요 취소!!");
+                        likeChk = false;
+                    } else {
+                        window.alert("게시글 좋아요 추가!!");
+                        likeChk = true;
+                    }
+                } else {
+                    throw new Error(`${response.status} 에러가 발생했습니다.`);
+                }
+            })
+            .then((response) => console.log(response))
+            .catch((error) => console.log(error.message))
+    }
+
+    /**
+     * 싫어요 클릭 이벤트
+     */
+    function dontLikeEvent() {
+        const id = document.getElementById('boardId').value;
+        let url = "/api/v1/noticeboard/add-dont-like";
+
+        if(dontLikeChk) {
+            url = "/api/v1/noticeboard/cancel-dont-like"
+        }
+
+        const payload = {boardId: id};
+        fetch(url, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        })
+            .then((response) => {
+                if(response.ok) {
+                    if(dontLikeChk) {
+                        window.alert("게시물 싫어요 취소!!");
+                        dontLikeChk = false;
+                    } else {
+                        window.alert("게시물 싫어요 추가!!");
+                        dontLikeChk = true;
+                    }
                 } else {
                     throw new Error(`${response.status} 에러가 발생했습니다.`);
                 }

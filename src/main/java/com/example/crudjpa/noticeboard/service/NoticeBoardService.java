@@ -17,4 +17,14 @@ public interface NoticeBoardService {
     public List<BoardResponseDTO> selectNoticeBoardList();
 
     public BoardResponseDTO selectNoticeBoardDtl(BoardDtlRequestDTO boardDtlRequestDTO);
+
+    public void addNoticeBoardViews(BoardRequestDTO boardRequestDTO);
+
+    public void addNoticeBoardLike(BoardRequestDTO boardRequestDTO);
+
+    public void cancelNoticeBoardLike(BoardRequestDTO boardRequestDTO);
+
+    public void addNoticeBoardDontLike(BoardRequestDTO boardRequestDTO);
+
+    public void cancelNoticeBoardDontLike(BoardRequestDTO boardRequestDTO);
 }

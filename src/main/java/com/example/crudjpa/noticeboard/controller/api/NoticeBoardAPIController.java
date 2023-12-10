@@ -68,4 +68,52 @@ public class NoticeBoardAPIController {
 
         return ResponseEntity.ok(boardResponseDTO);
     }
+
+    /**
+     * 좋아요 추가
+     * @param boardRequestDTO
+     * @return
+     */
+    @PatchMapping("/api/v1/noticeboard/addlike")
+    public ResponseEntity<Void> addLike(@RequestBody BoardRequestDTO boardRequestDTO) {
+        noticeBoardService.addNoticeBoardLike(boardRequestDTO);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 좋아요 취소
+     * @param boardRequestDTO
+     * @return
+     */
+    @PatchMapping("/api/v1/noticeboard/cancel-like")
+    public ResponseEntity<Void> cancelLike(@RequestBody BoardRequestDTO boardRequestDTO) {
+        noticeBoardService.cancelNoticeBoardLike(boardRequestDTO);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 싫어요 추가
+     * @param boardRequestDTO
+     * @return
+     */
+    @PatchMapping("/api/v1/noticeboard/add-dont-like")
+    public ResponseEntity<Void> addDontLike(@RequestBody BoardRequestDTO boardRequestDTO) {
+        noticeBoardService.addNoticeBoardDontLike(boardRequestDTO);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 싫어요
+     * @param boardRequestDTO
+     * @return
+     */
+    @PatchMapping("/api/v1/noticeboard/cancel-dont-like")
+    public ResponseEntity<Void> cancelDontLike(@RequestBody BoardRequestDTO boardRequestDTO) {
+        noticeBoardService.cancelNoticeBoardDontLike(boardRequestDTO);
+
+        return ResponseEntity.noContent().build();
+    }
 }

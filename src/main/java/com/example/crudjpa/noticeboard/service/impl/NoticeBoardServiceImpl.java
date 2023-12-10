@@ -21,6 +21,7 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
 
     //생성자 주입 롬복 어노테이션
     private final NoticeBoardRepository noticeBoardRepository;
+
     @Override
     public boolean createNoticeBoard(BoardRequestDTO boardRequestDTO) {
         NoticeBoardEntity noticeBoardEntity = NoticeBoardEntity.builder()
@@ -84,5 +85,79 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
         }
 
         return null;
+    }
+
+    /**
+     * 조회수 추가
+     * @param boardRequestDTO
+     */
+    @Override
+    @Transactional
+    public void addNoticeBoardViews(BoardRequestDTO boardRequestDTO) {
+        Optional<NoticeBoardEntity> selectNbEntity = noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId());
+        if(selectNbEntity.isPresent()) {
+            NoticeBoardEntity updateNbEntity = selectNbEntity.get();
+            updateNbEntity.addViews(updateNbEntity.getBoardViews());
+        }
+    }
+
+    /**
+     * 좋아요 추가
+     * @param boardRequestDTO
+     */
+    @Override
+    @Transactional
+    public void addNoticeBoardLike(BoardRequestDTO boardRequestDTO) {
+        Optional<NoticeBoardEntity> selectBoard =  noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId());
+
+        if(selectBoard.isPresent()) {
+            NoticeBoardEntity updateBoard = selectBoard.get();
+            updateBoard.addLikes(updateBoard.getBoardLike());
+        }
+    }
+
+    /**
+     * 좋아요 취소
+     * @param boardRequestDTO
+     */
+    @Override
+    @Transactional
+    public void cancelNoticeBoardLike(BoardRequestDTO boardRequestDTO) {
+        Optional<NoticeBoardEntity> selectBoard =  noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId());
+
+        if(selectBoard.isPresent()) {
+            NoticeBoardEntity updateBoard = selectBoard.get();
+            updateBoard.cancelLike(updateBoard.getBoardLike());
+        }
+    }
+
+    /**
+     * 싫어요 추가
+     * @param boardRequestDTO
+     */
+    @Override
+    @Transactional
+    public void addNoticeBoardDontLike(BoardRequestDTO boardRequestDTO) {
+        Optional<NoticeBoardEntity> selectBoard =  noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId());
+
+        if(selectBoard.isPresent()) {
+            NoticeBoardEntity updateBoard = selectBoard.get();
+            updateBoard.addDonLikes(updateBoard.getBoardDontLike());
+        }
+    }
+
+    /**
+     * 싫어요 취소
+     * @param boardRequestDTO
+     */
+    @Override
+    @Transactional
+    public void cancelNoticeBoardDontLike(BoardRequestDTO boardRequestDTO) {
+        Optional<NoticeBoardEntity> selectBoard =  noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId());
+
+        if(selectBoard.isPresent()) {
+            NoticeBoardEntity updateBoard = selectBoard.get();
+            updateBoard.cancelDonLike(updateBoard.getBoardDontLike());
+        }
     }
 }

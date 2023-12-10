@@ -43,6 +43,8 @@ public class NoticeBoardController {
         }
         //read
         if("R".equals(boardDtlResponseDTO.getBoardFlag())) {
+            //조회수 추가
+            noticeBoardService.addNoticeBoardViews(boardRequestDTO);
             //boardId 예외처리필
             model.addAttribute("boardResponseDTO", noticeBoardService.selectNoticeBoardDtl(boardDtlRequestDTO));
         }

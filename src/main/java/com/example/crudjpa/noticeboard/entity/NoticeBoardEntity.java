@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.net.Inet4Address;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ArrayList;
@@ -76,15 +77,66 @@ public class NoticeBoardEntity {
     @OneToMany(mappedBy = "noticeBoardEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)//매핑된 컬럼의 변수
     private List<CommentEntity> comments = new ArrayList<CommentEntity>();
 
+    /**
+     * 댓글 추가
+     * @param commentEntity
+     */
     public void addComment(CommentEntity commentEntity) {
         this.comments.add(commentEntity);
         commentEntity.setNoticeBoard(this);
     }
 
+    /**
+     * 게시글 수정
+     * @param boardTitle
+     * @param boardCn
+     * @param boardUptRegNm
+     * @param rowStatCd
+     */
     public void updateNoticeBoard(String boardTitle, String boardCn, String boardUptRegNm, String rowStatCd) {
         this.boardTitle = boardTitle;
         this.boardCn = boardCn;
         this.boardUptRegNm = boardUptRegNm;
         this.rowStatCd = rowStatCd;
+    }
+
+    /**
+     * 조회수 추가
+     * @param boardViews
+     */
+    public void addViews(Integer boardViews) {
+        this.boardViews = boardViews+1;
+    }
+
+    /**
+     * 좋아요 추가
+     * @param boardLike
+     */
+    public void addLikes(Integer boardLike) {
+        this.boardLike = boardLike+1;
+    }
+
+    /**
+     * 좋아요 취소
+     * @param boardLike
+     */
+    public void cancelLike(Integer boardLike) {
+        this.boardLike = boardLike-1;
+    }
+
+    /**
+     * 싫어요 추가
+     * @param boardDontLike
+     */
+    public void addDonLikes(Integer boardDontLike) {
+        this.boardDontLike = boardDontLike+1;
+    }
+
+    /**
+     * 싫어요 취소
+     * @param boardDontLike
+     */
+    public void cancelDonLike(Integer boardDontLike) {
+        this.boardDontLike = boardDontLike-1;
     }
 }
