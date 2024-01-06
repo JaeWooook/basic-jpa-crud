@@ -1,7 +1,6 @@
 package com.example.crudjpa.noticeboard.controller.api;
 
 import com.example.crudjpa.noticeboard.dto.request.BoardRequestDTO;
-import com.example.crudjpa.noticeboard.dto.response.BoardResponseDTO;
 import com.example.crudjpa.noticeboard.service.NoticeBoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -56,17 +55,6 @@ public class NoticeBoardAPIController {
             return ResponseEntity.ok("success");
         }
         return ResponseEntity.ok("fail");
-    }
-
-    /**
-     * 게시글 기본 조회
-     * @return
-     */
-    @GetMapping("/api/v1/noticeboard/basic-list")
-    public ResponseEntity<List<BoardResponseDTO>> selectNoticeBoardList(){
-        List<BoardResponseDTO> boardResponseDTO = noticeBoardService.selectNoticeBoardList();
-
-        return ResponseEntity.ok(boardResponseDTO);
     }
 
     /**

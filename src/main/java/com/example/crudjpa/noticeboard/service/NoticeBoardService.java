@@ -27,4 +27,10 @@ public interface NoticeBoardService {
     public void addNoticeBoardDontLike(BoardRequestDTO boardRequestDTO);
 
     public void cancelNoticeBoardDontLike(BoardRequestDTO boardRequestDTO);
+
+    public List<BoardResponseDTO> searchTitleContain(BoardRequestDTO boardRequestDTO);
+
+    public List<BoardResponseDTO> searchContentContain(BoardRequestDTO boardRequestDTO);
+
+    public List<BoardResponseDTO> searchTitleOrCnContain(BoardRequestDTO boardRequestDTO);
 }

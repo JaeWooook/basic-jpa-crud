@@ -3,12 +3,15 @@ package com.example.crudjpa.noticeboard.controller;
 import com.example.crudjpa.noticeboard.dto.request.BoardDtlRequestDTO;
 import com.example.crudjpa.noticeboard.dto.request.BoardRequestDTO;
 import com.example.crudjpa.noticeboard.dto.response.BoardDtlResponseDTO;
+import com.example.crudjpa.noticeboard.dto.response.BoardResponseDTO;
 import com.example.crudjpa.noticeboard.service.NoticeBoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -27,6 +30,31 @@ public class NoticeBoardController {
 
         model.addAttribute("noticeBoardList", noticeBoardService.selectNoticeBoardList());
         return "views/noticeboard/NoticeBoardList";
+    }
+
+    /**
+     * 제목,내용,제목+내용 검색기능
+     * @param searchId
+     * @param searchCn
+     * @return
+     */
+    @GetMapping("/noticeboard/{searchId}/{searchCn}")
+    public ResponseEntity<List<BoardResponseDTO>> searchList(@PathVariable String searchId, @PathVariable String searchCn) {
+
+        BoardRequestDTO boardRequestDTO = BoardRequestDTO.builder()
+                .boardId(0)
+                .boardTitle(searchCn)
+                .boardCn(searchCn).build();
+
+        List<BoardResponseDTO> noticeBoardList = new ArrayList<BoardResponseDTO>();
+        if("SCH01".equals(searchId)){ //제목검색 조회
+            noticeBoardList = noticeBoardService.searchTitleContain(boardRequestDTO);
+        } else if("SCH02".equals(searchId)) { //내용검색 조회
+            noticeBoardList = noticeBoardService.searchContentContain(boardRequestDTO);
+        } else if("SCH03".equals(searchId)) {//제목 + 내용검색 조회
+            noticeBoardList = noticeBoardService.searchTitleOrCnContain(boardRequestDTO);
+        }
+        return ResponseEntity.ok(noticeBoardList);
     }
 
     /**

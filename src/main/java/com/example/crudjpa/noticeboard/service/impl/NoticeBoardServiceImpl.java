@@ -160,4 +160,45 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
             updateBoard.cancelDonLike(updateBoard.getBoardDontLike());
         }
     }
+
+    /**
+     * 제목 검색 기능
+     * @param boardRequestDTO
+     * @return
+     */
+    public List<BoardResponseDTO> searchTitleContain(BoardRequestDTO boardRequestDTO) {
+        List<NoticeBoardEntity> searchTitleContainL = noticeBoardRepository.findAllByBoardTitleContainingIgnoreCase(boardRequestDTO.getBoardTitle());
+
+        return searchTitleContainL.stream()
+                .map(BoardResponseDTO::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 내용 검색 기능
+     * @param boardRequestDTO
+     * @return
+     */
+    public List<BoardResponseDTO> searchContentContain(BoardRequestDTO boardRequestDTO) {
+        List<NoticeBoardEntity> searchTitleContainL = noticeBoardRepository.findAllByBoardCnContainingIgnoreCase(boardRequestDTO.getBoardCn());
+
+        return searchTitleContainL.stream()
+                .map(BoardResponseDTO::toDTO)
+                .collect(Collectors.toList());
+
+    }
+
+    /**
+     * 제목 + 내용 검색 기능
+     * @param boardRequestDTO
+     * @return
+     */
+    public List<BoardResponseDTO> searchTitleOrCnContain(BoardRequestDTO boardRequestDTO) {
+        List<NoticeBoardEntity> searchTitleContainL = noticeBoardRepository.findAllByBoardTitleContainingOrBoardCnContainingIgnoreCase(boardRequestDTO.getBoardTitle(), boardRequestDTO.getBoardCn());
+
+        return searchTitleContainL.stream()
+                .map(BoardResponseDTO::toDTO)
+                .collect(Collectors.toList());
+
+    }
 }
