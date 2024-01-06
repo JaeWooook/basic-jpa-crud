@@ -133,12 +133,14 @@
                 //table list 추가
                 console.log("list", json);
                 json.forEach((obj, idx) => {
+                    let formatBeforeBoardFstRegDt = new Date(obj.boardFstRegDt);
+                    let boardFstRegDt = dateFormat(formatBeforeBoardFstRegDt);
                     tableHTML += `<tr>
                                     <td><input type="checkbox"/></td>
                                     <td th:text="${obj.boardId}">${obj.boardId}</td>
                                     <td className="tl"><a th:href="@{/noticeboard/detail( boardId=${obj.boardId}, boardFlag = \'R\' )}" th:text="${obj.boardTitle}"></a>${obj.boardTitle}</td>
                                     <td th:text="${obj.boardFstRegNm}">${obj.boardFstRegNm}</td>
-                                    <td th:text="${obj.boardFstRegDt}">${obj.boardFstRegDt}</td>
+                                    <td th:text="${obj.boardFstRegDt}">${boardFstRegDt}</td>
                                     <td th:text="${obj.boardViews}">${obj.boardViews}</td>
                                     <td th:text="${obj.boardLike}">${obj.boardLike}</td>
                                     <td th:text="${obj.boardDontLike}">${obj.boardDontLike}</td>
@@ -152,10 +154,33 @@
         .catch((error) => console.log("에러",error.message))
     }
 
+    /**
+     * 엔터키 이벤트
+     * @param e
+     */
     function enterKey(e) {
         if(e.keyCode === 13) {
             //엔터키눌렀을때 동작
             searchEvent();
         }
+    }
+
+    /**
+     * 날짜 포맷팅
+     * @param date
+     * @returns {string}
+     */
+    function dateFormat(date) {
+        let month = date.getMonth() + 1;
+        let day = date.getDate();
+        let hour = date.getHours();
+        let minute = date.getMinutes();
+
+        month = month >= 10 ? month : '0' + month;
+        day = day >= 10 ? day : '0' + day;
+        hour = hour >= 10 ? hour : '0' + hour;
+        minute = minute >= 10 ? minute : '0' + minute;
+
+        return date.getFullYear() + '-' + month + '-' + day + ' ' + hour + ':' + minute;
     }
 </script>
