@@ -2,17 +2,16 @@ package com.example.crudjpa.noticeboard.controller;
 
 import com.example.crudjpa.noticeboard.dto.request.BoardDtlRequestDTO;
 import com.example.crudjpa.noticeboard.dto.request.BoardRequestDTO;
+import com.example.crudjpa.noticeboard.dto.request.SearchRequestDTO;
 import com.example.crudjpa.noticeboard.dto.response.BoardDtlResponseDTO;
-import com.example.crudjpa.noticeboard.dto.response.BoardResponseDTO;
 import com.example.crudjpa.noticeboard.service.NoticeBoardService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,31 +29,6 @@ public class NoticeBoardController {
 
         model.addAttribute("noticeBoardList", noticeBoardService.selectNoticeBoardList());
         return "views/noticeboard/NoticeBoardList";
-    }
-
-    /**
-     * 제목,내용,제목+내용 검색기능
-     * @param searchId
-     * @param searchCn
-     * @return
-     */
-    @GetMapping("/noticeboard/{searchId}/{searchCn}")
-    public ResponseEntity<List<BoardResponseDTO>> searchList(@PathVariable String searchId, @PathVariable String searchCn) {
-
-        BoardRequestDTO boardRequestDTO = BoardRequestDTO.builder()
-                .boardId(0)
-                .boardTitle(searchCn)
-                .boardCn(searchCn).build();
-
-        List<BoardResponseDTO> noticeBoardList = new ArrayList<BoardResponseDTO>();
-        if("SCH01".equals(searchId)){ //제목검색 조회
-            noticeBoardList = noticeBoardService.searchTitleContain(boardRequestDTO);
-        } else if("SCH02".equals(searchId)) { //내용검색 조회
-            noticeBoardList = noticeBoardService.searchContentContain(boardRequestDTO);
-        } else if("SCH03".equals(searchId)) {//제목 + 내용검색 조회
-            noticeBoardList = noticeBoardService.searchTitleOrCnContain(boardRequestDTO);
-        }
-        return ResponseEntity.ok(noticeBoardList);
     }
 
     /**
@@ -79,5 +53,42 @@ public class NoticeBoardController {
         //update
         model.addAttribute("pageFlag", boardDtlResponseDTO.getBoardFlag());
         return "views/noticeboard/NoticeBoardDtl";
+    }
+
+    /**
+     * 제목/내용/제목+내용 검색 및 최신,좋아요,싫어요순 정렬 및 페이징처리
+     * @param page
+     * @param sort
+     * @param searchType
+     * @param searchKeyword
+     * @param model
+     * @return
+     */
+    @GetMapping("/noticeboard/search")
+    public String searchOrSortOrPage(
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "size", defaultValue = "10") Integer size,
+            @RequestParam(value = "sort", defaultValue = "boardFstRegDt") String sort,
+            @RequestParam(value = "searchType", defaultValue = "title") String searchType,
+            @RequestParam(value = "searchKeyword", defaultValue = "") String searchKeyword,
+            Model model
+            )
+    {
+        SearchRequestDTO searchRequestDTO = SearchRequestDTO.builder()
+                .page(page)
+                .size(size)
+                .sort(sort)
+                .searchType(searchType)
+                .searchKeyword(searchKeyword)
+                .build();
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort).descending());
+        model.addAttribute("noticeBoardList", noticeBoardService.searchOrSortOrPage(searchRequestDTO, pageable));
+        model.addAttribute("page", page);
+        model.addAttribute("size", size);
+        model.addAttribute("sort", sort);
+        model.addAttribute("searchType", searchType);
+        model.addAttribute("searchKeyword", searchKeyword);
+
+        return "/views/noticeboard/BoardSearchList";
     }
 }

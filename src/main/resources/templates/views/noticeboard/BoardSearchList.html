@@ -1,0 +1,206 @@
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout/basic">
+<th:block layout:fragment="title">
+  <title>리스트 페이지</title>
+</th:block>
+
+<th:block layout:fragment="content">
+  <form id="initForm">
+    <input type="hidden" id="resSort" th:value="${sort}"/>
+    <input type="hidden" id="reSearchType" th:value="${searchType}"/>
+    <input type="hidden" id="resSearchKeyword" th:value="${searchKeyword}"/>
+  </form>
+  <a th:href="@{/}">홈이동</a>
+  <div class="page_tits">
+    <h3>게시판 관리</h3>
+    <p class="path"><strong>현재 위치 :</strong> <span>검색페이지</span> <span>리스트형</span> <span>리스트</span></p>
+  </div>
+
+  <div class="content">
+    <section>
+      <!--/* 검색 */-->
+      <div class="search_box">
+        <form id="searchForm" onsubmit="return false;" autocomplete="off">
+          <div class="sch_group fl">
+            <select title="검색 유형 선택" id="searchBox">
+              <option value="">검색 선택</option>
+              <option value="title">제목</option>
+              <option value="content">내용</option>
+              <option value="titleOrCn">제목+내용</option>
+            </select>
+            <input type="text" id="ibxSearch" onkeyup="enterKey(event)" placeholder="키워드를 입력해 주세요." title="키워드 입력" value=""/>
+            <button type="button" class="bt_search" id="searchBtn"><i class="fas fa-search"></i><span class="skip_info">검색</span></button>
+          </div>
+        </form>
+      </div>
+
+      <div>
+        <div>
+          <select title="정렬 유형 선택" id="orderBox">
+            <option value="boardFstRegDt">최신순</option>
+            <option value="boardLike">좋아요</option>
+            <option value="boardDontLike">싫어요</option>
+          </select>
+        </div>
+      </div>
+
+      <!--/* 리스트 */-->
+      <table class="tb tb_col">
+        <colgroup>
+          <col style="width:50px;"/><col style="width:7.5%;"/><col style="width:auto;"/><col style="width:10%;"/><col style="width:15%;"/><col style="width:7.5%;"/><col style="width:7.5%;"/><col style="width:7.5%;"/><col style="width:7.5%;"/>
+        </colgroup>
+        <thead>
+        <tr>
+          <th scope="col"><input type="checkbox"/></th>
+          <th scope="col">번호</th>
+          <th scope="col">제목</th>
+          <th scope="col">작성자</th>
+          <th scope="col">등록일</th>
+          <th scope="col">조회</th>
+          <th scope="col">좋아요</th>
+          <th scope="col">싫어요</th>
+          <th scope="col">댓글수</th>
+        </tr>
+        </thead>
+        <tbody id="tableBody">
+        <tr th:if="${not #lists.isEmpty( noticeBoardList )}" th:each="row, status : ${noticeBoardList}">
+          <td><input type="checkbox"/></td>
+          <td th:text="${row.boardId}"></td>
+          <td class="tl"><a th:href="@{/noticeboard/detail( boardId=${row.boardId}, boardFlag = 'R' )}" th:text="${row.boardTitle}"></a></td>
+          <td th:text="${row.boardFstRegNm}"></td>
+          <td th:text="${#temporals.format( row.boardFstRegDt, 'yyyy-MM-dd HH:mm' )}"></td>
+          <td th:text="${row.boardViews}"></td>
+          <td th:text="${row.boardLike}"></td>
+          <td th:text="${row.boardDontLike}"></td>
+          <td th:text="${row.commentsCnt}"></td>
+        </tr>
+
+        <tr th:unless="${not #lists.isEmpty( noticeBoardList )}">
+          <td colspan="5">
+            <div class="no_data_msg">검색된 결과가 없습니다.</div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <!--/* 페이지네이션 */-->
+      <div class="paging">
+        <a href="#" class="page_bt first">첫 페이지</a><a href="#" class="page_bt prev">이전 페이지 그룹</a>
+        <p><span class="on">1</span><a href="#">2</a><a href="#">3</a><a href="#">4</a><a href="#">5</a><a href="#">6</a><a href="#">7</a><a href="#">8</a><a href="#">9</a><a href="#">10</a></p>
+        <a href="#" class="page_bt next">다음 페이지 그룹</a><a href="#" class="page_bt last">마지막 페이지</a>
+      </div>
+
+      <!--/* 버튼 */-->
+      <p class="btn_set tr">
+        <a th:href="@{/noticeboard/detail(boardFlag = 'C')}" class="btns btn_st3 btn_mid">글쓰기</a>
+      </p>
+    </section>
+  </div> <!--/* .content */-->
+</th:block>
+</html>
+<script>
+  document.getElementById("searchBtn").addEventListener('click', searchEvent);
+  document.getElementById("orderBox").addEventListener('change', orderEvent);
+  //화면 로드후 초기값 셋팅
+  window.onload =function (){
+    initSetting();
+  };
+
+  /**
+   * 초기값
+   */
+  function initSetting() {
+    const resSort = document.getElementById("resSort").value;
+    const resSearchType = document.getElementById("reSearchType").value;
+    const resSearchKeyword = document.getElementById("resSearchKeyword").value;
+
+    const searchType = document.getElementById("searchBox");
+    const searchKeyword = document.getElementById("ibxSearch");
+    const sort = document.getElementById("orderBox");
+
+    //검색 셀렉트박스 초기화
+    for(let i=0; i<searchType.length; i++) {
+      if(searchType.options[i].selected === true) {
+        searchType.options[i].selected = false;
+      }
+    }
+    //검색 인풋박스 초기화
+    searchKeyword.value = '';
+    //정렬 셀렉트박스 초기화
+    for(let i=0; i<sort.length; i++) {
+      if(sort.options[i].selected === true) {
+        sort.options[i].selected = false;
+      }
+    }
+
+    //검색 셀렉트박스 값 추가
+    for(let i=0; i<searchType.options.length; i++) {
+      if(resSearchType === searchType.options[i].value) {
+        searchType.options[i].selected = true;
+      }
+    }
+    //검색 키워드입력
+    searchKeyword.value=resSearchKeyword;
+    //정렬 셀렉트박스 값 추가
+    for(let i=0; i<sort.options.length; i++) {
+      if(resSort === sort.options[i].value) {
+        sort.options[i].selected = true;
+      }
+    }
+  }
+
+  /**
+   * 검색기능 이벤트
+   */
+  function searchEvent() {
+    //검색 value
+    const selectSearch = document.getElementById("searchBox");
+    const searchType = selectSearch.options[selectSearch.selectedIndex].value;
+    const searchKeyword = document.getElementById("ibxSearch").value;
+    //정렬 value
+    const selectOrder = document.getElementById("orderBox");
+    const sort = selectOrder.options[selectOrder.selectedIndex].value;
+    let url = "";
+
+    if(searchKeyword === "") {
+      window.location.replace("/noticeboard");
+      return;
+    }
+
+    if(searchType === "") {
+      window.alert("선택값을 선택하세요");
+      return;
+    }
+    window.alert("검색완료!!");
+    //url
+    url = "/noticeboard/search?page?"+ 0 +"&size="+ 10 + "&sort="+ sort +"&searchType="+ searchType +"&searchKeyword="+ searchKeyword;
+    window.location.assign(url);
+  }
+
+  /**
+   * 정렬 이벤트
+   */
+  function orderEvent() {
+    //검색 value
+    const selectSearch = document.getElementById("searchBox");
+    const searchType = selectSearch.options[selectSearch.selectedIndex].value;
+    const searchKeyword = document.getElementById("ibxSearch").value;
+    //정렬 value
+    const selectOrder = document.getElementById("orderBox");
+    const sort = selectOrder.options[selectOrder.selectedIndex].value;
+    const url = "/noticeboard/search?page="+ 0 + "&size="+ 10 +"&sort="+ sort +"&searchType="+ searchType +"&searchKeyword="+ searchKeyword;
+    const sortName = sort === "bordFstRegDt" ? "최신순" : sort === "boardLike" ? "좋아요" : "싫어요";
+    window.alert(sortName+" 정렬 완료");
+    window.location.assign(url);
+  }
+
+  /**
+   * 엔터키 이벤트
+   * @param e
+   */
+  function enterKey(e) {
+    if(e.keyCode === 13) {
+      //엔터키눌렀을때 동작
+      searchEvent();
+    }
+  }
+</script>

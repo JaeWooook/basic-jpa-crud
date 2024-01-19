@@ -2,11 +2,14 @@ package com.example.crudjpa.noticeboard.service.impl;
 
 import com.example.crudjpa.noticeboard.dto.request.BoardDtlRequestDTO;
 import com.example.crudjpa.noticeboard.dto.request.BoardRequestDTO;
+import com.example.crudjpa.noticeboard.dto.request.SearchRequestDTO;
 import com.example.crudjpa.noticeboard.dto.response.BoardResponseDTO;
 import com.example.crudjpa.noticeboard.entity.NoticeBoardEntity;
 import com.example.crudjpa.noticeboard.repository.NoticeBoardRepository;
 import com.example.crudjpa.noticeboard.service.NoticeBoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -162,43 +165,24 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
     }
 
     /**
-     * 제목 검색 기능
-     * @param boardRequestDTO
+     * 제목/내용/제목+내용 검색 및 최신,좋아요,싫어요순 정렬 및 페이징처리
+     * @param searchRequestDTO
+     * @param pageable
      * @return
      */
-    public List<BoardResponseDTO> searchTitleContain(BoardRequestDTO boardRequestDTO) {
-        List<NoticeBoardEntity> searchTitleContainL = noticeBoardRepository.findAllByBoardTitleContainingIgnoreCase(boardRequestDTO.getBoardTitle());
+    public Page<BoardResponseDTO> searchOrSortOrPage(SearchRequestDTO searchRequestDTO, Pageable pageable) {
+        String searchType = searchRequestDTO.getSearchType();
+        String searchKeyWord = searchRequestDTO.getSearchKeyword();
 
-        return searchTitleContainL.stream()
-                .map(BoardResponseDTO::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * 내용 검색 기능
-     * @param boardRequestDTO
-     * @return
-     */
-    public List<BoardResponseDTO> searchContentContain(BoardRequestDTO boardRequestDTO) {
-        List<NoticeBoardEntity> searchTitleContainL = noticeBoardRepository.findAllByBoardCnContainingIgnoreCase(boardRequestDTO.getBoardCn());
-
-        return searchTitleContainL.stream()
-                .map(BoardResponseDTO::toDTO)
-                .collect(Collectors.toList());
-
-    }
-
-    /**
-     * 제목 + 내용 검색 기능
-     * @param boardRequestDTO
-     * @return
-     */
-    public List<BoardResponseDTO> searchTitleOrCnContain(BoardRequestDTO boardRequestDTO) {
-        List<NoticeBoardEntity> searchTitleContainL = noticeBoardRepository.findAllByBoardTitleContainingOrBoardCnContainingIgnoreCase(boardRequestDTO.getBoardTitle(), boardRequestDTO.getBoardCn());
-
-        return searchTitleContainL.stream()
-                .map(BoardResponseDTO::toDTO)
-                .collect(Collectors.toList());
-
+        if(searchType.equals("title")) {
+            Page<NoticeBoardEntity> noticeBoardEntityPage = noticeBoardRepository.findAllByBoardTitleContainingIgnoreCase(searchKeyWord, pageable);
+            return BoardResponseDTO.pageToDTO(noticeBoardEntityPage);
+        } else if(searchType.equals("content")) {
+            Page<NoticeBoardEntity> noticeBoardEntityPage = noticeBoardRepository.findAllByBoardCnContainingIgnoreCase(searchKeyWord, pageable);
+            return BoardResponseDTO.pageToDTO(noticeBoardEntityPage);
+        } else {
+            Page<NoticeBoardEntity> noticeBoardEntityPage = noticeBoardRepository.findAllByBoardTitleContainingOrBoardCnContainingIgnoreCase(searchKeyWord, searchKeyWord, pageable);
+            return BoardResponseDTO.pageToDTO(noticeBoardEntityPage);
+        }
     }
 }

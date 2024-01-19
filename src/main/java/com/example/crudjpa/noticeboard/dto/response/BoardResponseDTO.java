@@ -3,6 +3,7 @@ package com.example.crudjpa.noticeboard.dto.response;
 import com.example.crudjpa.comment.entity.CommentEntity;
 import com.example.crudjpa.noticeboard.entity.NoticeBoardEntity;
 import lombok.*;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,5 +42,23 @@ public class BoardResponseDTO {
                 .commentsCnt(noticeBoardEntity.getComments().size())
                 .rowStatCd(noticeBoardEntity.getRowStatCd())
                 .build();
+    }
+
+    public static Page<BoardResponseDTO> pageToDTO (Page<NoticeBoardEntity> noticeBoardEntityPage) {
+         Page<BoardResponseDTO> transAfterList = noticeBoardEntityPage.map(data -> BoardResponseDTO.builder().boardId(data.getBoardId())
+                 .boardTitle(data.getBoardTitle())
+                 .boardCn(data.getBoardCn())
+                 .boardViews(data.getBoardViews())
+                 .boardLike(data.getBoardLike())
+                 .boardDontLike(data.getBoardDontLike())
+                 .boardFstRegNm(data.getBoardFstRegNm())
+                 .boardFstRegDt(data.getBoardFstRegDt())
+                 .boardUptRegNm(data.getBoardUptRegNm())
+                 .boardUptRegDt(data.getBoardUptRegDt())
+                 .commentsCnt(data.getComments().size())
+                 .rowStatCd(data.getRowStatCd())
+                 .build());
+
+         return transAfterList;
     }
 }

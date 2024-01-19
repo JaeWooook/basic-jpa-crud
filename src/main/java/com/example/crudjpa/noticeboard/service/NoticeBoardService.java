@@ -2,7 +2,10 @@ package com.example.crudjpa.noticeboard.service;
 
 import com.example.crudjpa.noticeboard.dto.request.BoardDtlRequestDTO;
 import com.example.crudjpa.noticeboard.dto.request.BoardRequestDTO;
+import com.example.crudjpa.noticeboard.dto.request.SearchRequestDTO;
 import com.example.crudjpa.noticeboard.dto.response.BoardResponseDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -28,9 +31,5 @@ public interface NoticeBoardService {
 
     public void cancelNoticeBoardDontLike(BoardRequestDTO boardRequestDTO);
 
-    public List<BoardResponseDTO> searchTitleContain(BoardRequestDTO boardRequestDTO);
-
-    public List<BoardResponseDTO> searchContentContain(BoardRequestDTO boardRequestDTO);
-
-    public List<BoardResponseDTO> searchTitleOrCnContain(BoardRequestDTO boardRequestDTO);
+    public Page<BoardResponseDTO> searchOrSortOrPage(SearchRequestDTO searchRequestDTO, Pageable pageable);
 }

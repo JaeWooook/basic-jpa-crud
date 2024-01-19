@@ -18,14 +18,24 @@
                     <div class="sch_group fl">
                         <select title="검색 유형 선택" id="searchBox">
                             <option value="">검색 선택</option>
-                            <option value="SCH01">제목</option>
-                            <option value="SCH02">내용</option>
-                            <option value="SCH03">제목+내용</option>
+                            <option value="title">제목</option>
+                            <option value="content">내용</option>
+                            <option value="titleOrCn">제목+내용</option>
                         </select>
                         <input type="text" id="ibxSearch" onkeyup="enterKey(event)" placeholder="키워드를 입력해 주세요." title="키워드 입력"/>
                         <button type="button" class="bt_search" id="searchBtn"><i class="fas fa-search"></i><span class="skip_info">검색</span></button>
                     </div>
                 </form>
+            </div>
+
+            <div>
+                <div>
+                    <select title="정렬 유형 선택" id="orderBox">
+                        <option value="boardFstRegDt"></a>최신순</option>
+                        <option value="boardLike">좋아요</option>
+                        <option value="boardDontLike">싫어요</option>
+                    </select>
+                </div>
             </div>
 
             <!--/* 리스트 */-->
@@ -85,73 +95,52 @@
 </html>
 <script>
     document.getElementById("searchBtn").addEventListener('click', searchEvent);
+    document.getElementById("orderBox").addEventListener('change', orderEvent);
 
     /**
      * 검색기능 이벤트
      */
     function searchEvent() {
-        const tbodyId = document.getElementById("tableBody");
-        //selectbox선택값
-        const select = document.getElementById("searchBox");
-        const searchId = select.options[select.selectedIndex].value;
-        //inputbox선택값
-        const searchCn = document.getElementById("ibxSearch").value;
+        //검색 value
+        const selectSearch = document.getElementById("searchBox");
+        const searchType = selectSearch.options[selectSearch.selectedIndex].value;
+        const searchKeyword = document.getElementById("ibxSearch").value;
+        //정렬 value
+        const selectOrder = document.getElementById("orderBox");
+        const sort = selectOrder.options[selectOrder.selectedIndex].value;
+        let url = "";
 
-        if(searchCn === "") {
+        if(searchKeyword === "") {
             window.location.replace("/noticeboard");
             return;
         }
 
-        if(searchId === "") {
+        if(searchType === "") {
             window.alert("선택값을 선택하세요");
             return;
         }
         //url
-        const url = "/noticeboard/"+ searchId + "/" + searchCn;
-        //api호출
-        fetch(url, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        }).then((response) => {
-            if(response.ok) {
-                return response.json();
-            } else {
-                throw new Error(`${response.status} 에러가 발생했습니다.`);
-            }
-        })
-        .then((json) => {
-            let tableHTML = '';
-            if (!json.length) {
-                tableHTML += '<tr>';
-                tableHTML += '  <td colSpan="5">';
-                tableHTML += '      <div className="no_data_msg">검색된 결과가 없습니다.</div>';
-                tableHTML += '  </td>';
-                tableHTML += '</tr>';
-            } else {
-                //table list 추가
-                console.log("list", json);
-                json.forEach((obj, idx) => {
-                    let formatBeforeBoardFstRegDt = new Date(obj.boardFstRegDt);
-                    let boardFstRegDt = dateFormat(formatBeforeBoardFstRegDt);
-                    tableHTML += `<tr>
-                                    <td><input type="checkbox"/></td>
-                                    <td th:text="${obj.boardId}">${obj.boardId}</td>
-                                    <td className="tl"><a th:href="@{/noticeboard/detail( boardId=${obj.boardId}, boardFlag = \'R\' )}" th:text="${obj.boardTitle}"></a>${obj.boardTitle}</td>
-                                    <td th:text="${obj.boardFstRegNm}">${obj.boardFstRegNm}</td>
-                                    <td th:text="${obj.boardFstRegDt}">${boardFstRegDt}</td>
-                                    <td th:text="${obj.boardViews}">${obj.boardViews}</td>
-                                    <td th:text="${obj.boardLike}">${obj.boardLike}</td>
-                                    <td th:text="${obj.boardDontLike}">${obj.boardDontLike}</td>
-                                    <td th:text="${obj.commentsCnt}">${obj.commentsCnt}</td>
-                                  </tr>`;
-                });
-            }
-            tbodyId.innerHTML=tableHTML;
-            window.alert("검색 완료");
-        })
-        .catch((error) => console.log("에러",error.message))
+        url = "/noticeboard/search?page?"+ 0 +"&size="+ 10 + "&sort="+ sort +"&searchType="+ searchType +"&searchKeyword="+ searchKeyword;
+
+        window.alert("검색완료!!");
+        window.location.assign(url);
+    }
+
+    /**
+     * 정렬 이벤트
+     */
+    function orderEvent() {
+        //검색 value
+        const selectSearch = document.getElementById("searchBox");
+        const searchType = selectSearch.options[selectSearch.selectedIndex].value;
+        const searchKeyword = document.getElementById("ibxSearch").value;
+        //정렬 value
+        const selectOrder = document.getElementById("orderBox");
+        const sort = selectOrder.options[selectOrder.selectedIndex].value;
+        const url = "/noticeboard/search?page="+ 0 + "&size="+ 10 +"&sort="+ sort +"&searchType="+ searchType +"&searchKeyword="+ searchKeyword;
+        const sortName = sort === "bordFstRegDt" ? "최신순" : sort === "boardLike" ? "좋아요" : "싫어요";
+        window.alert(sortName+" 정렬 완료");
+        window.location.assign(url);
     }
 
     /**
@@ -163,24 +152,5 @@
             //엔터키눌렀을때 동작
             searchEvent();
         }
-    }
-
-    /**
-     * 날짜 포맷팅
-     * @param date
-     * @returns {string}
-     */
-    function dateFormat(date) {
-        let month = date.getMonth() + 1;
-        let day = date.getDate();
-        let hour = date.getHours();
-        let minute = date.getMinutes();
-
-        month = month >= 10 ? month : '0' + month;
-        day = day >= 10 ? day : '0' + day;
-        hour = hour >= 10 ? hour : '0' + hour;
-        minute = minute >= 10 ? minute : '0' + minute;
-
-        return date.getFullYear() + '-' + month + '-' + day + ' ' + hour + ':' + minute;
     }
 </script>
