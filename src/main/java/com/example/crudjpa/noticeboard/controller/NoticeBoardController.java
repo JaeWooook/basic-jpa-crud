@@ -4,8 +4,10 @@ import com.example.crudjpa.noticeboard.dto.request.BoardDtlRequestDTO;
 import com.example.crudjpa.noticeboard.dto.request.BoardRequestDTO;
 import com.example.crudjpa.noticeboard.dto.request.SearchRequestDTO;
 import com.example.crudjpa.noticeboard.dto.response.BoardDtlResponseDTO;
+import com.example.crudjpa.noticeboard.dto.response.BoardResponseDTO;
 import com.example.crudjpa.noticeboard.service.NoticeBoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -25,9 +27,21 @@ public class NoticeBoardController {
      * @return
      */
     @GetMapping("/noticeboard")
-    public String moveNoticeBoardListPage(Model model) {
+    public String moveNoticeBoardListPage(
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "size", defaultValue = "10") Integer size,
+            @RequestParam(value = "sort", defaultValue = "boardFstRegDt") String sort,
+            @RequestParam(value = "searchType", defaultValue = "title") String searchType,
+            @RequestParam(value = "searchKeyword", defaultValue = "") String searchKeyword,
+            Model model) {
 
-        model.addAttribute("noticeBoardList", noticeBoardService.selectNoticeBoardList());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort).descending());
+        Page<BoardResponseDTO> noticeBoardList = noticeBoardService.selectNoticeBoardList(pageable);
+        model.addAttribute("page", page);
+        model.addAttribute("size", size);
+        model.addAttribute("startPage", noticeBoardService.calStartPage(pageable));
+        model.addAttribute("endPage", noticeBoardService.calEndPage(pageable, noticeBoardList));
+        model.addAttribute("noticeBoardList", noticeBoardList);
         return "views/noticeboard/NoticeBoardList";
     }
 
@@ -82,10 +96,14 @@ public class NoticeBoardController {
                 .searchKeyword(searchKeyword)
                 .build();
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort).descending());
-        model.addAttribute("noticeBoardList", noticeBoardService.searchOrSortOrPage(searchRequestDTO, pageable));
+        Page<BoardResponseDTO> noticeBoardList = noticeBoardService.searchOrSortOrPage(searchRequestDTO, pageable);
+        model.addAttribute("noticeBoardList", noticeBoardList);
         model.addAttribute("page", page);
         model.addAttribute("size", size);
         model.addAttribute("sort", sort);
+        model.addAttribute("startPage", noticeBoardService.calStartPage(pageable));
+        model.addAttribute("endPage", noticeBoardService.calEndPage(pageable, noticeBoardList));
+        model.addAttribute("totalPage", noticeBoardList.getTotalPages());
         model.addAttribute("searchType", searchType);
         model.addAttribute("searchKeyword", searchKeyword);
 

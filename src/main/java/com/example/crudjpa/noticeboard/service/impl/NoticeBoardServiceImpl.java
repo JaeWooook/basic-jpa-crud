@@ -14,9 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -67,14 +65,17 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
         return !noticeBoardRepository.existsById(boardRequestDTO.getBoardId());
     }
 
+    /**
+     * 메인페이지 기본 조회
+     * @param pageable
+     * @return
+     */
     @Override
-    public List<BoardResponseDTO> selectNoticeBoardList() {
-        List<NoticeBoardEntity> noticeBoardDTOList = noticeBoardRepository.findAllByOrderByBoardFstRegDtDesc();
+    public Page<BoardResponseDTO> selectNoticeBoardList(Pageable pageable) {
+        Page<NoticeBoardEntity> noticeBoardEntityPage = noticeBoardRepository.findAllBy(pageable);
 
 
-        return noticeBoardDTOList.stream()
-                .map(BoardResponseDTO::toDTO)
-                .collect(Collectors.toList());
+        return BoardResponseDTO.pageToDTO(noticeBoardEntityPage);
     }
 
     @Override
@@ -184,5 +185,27 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
             Page<NoticeBoardEntity> noticeBoardEntityPage = noticeBoardRepository.findAllByBoardTitleContainingOrBoardCnContainingIgnoreCase(searchKeyWord, searchKeyWord, pageable);
             return BoardResponseDTO.pageToDTO(noticeBoardEntityPage);
         }
+    }
+
+    /**
+     * 시작페이지 계산
+     * @param page
+     * @return
+     */
+    public Integer calStartPage(Pageable page) {
+        int nowPage = page.getPageNumber()+1;
+        int startPage = Math.max(nowPage - 4, 1);
+        return startPage;
+    }
+
+    /**
+     * 끝페이지 계산
+     * @param page
+     * @return
+     */
+    public Integer calEndPage(Pageable page, Page<BoardResponseDTO> list) {
+        int nowPage = page.getPageNumber()+1;
+        int endPage = Math.min(nowPage + 5, list.getTotalPages());
+        return endPage;
     }
 }

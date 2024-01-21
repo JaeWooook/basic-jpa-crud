@@ -17,7 +17,7 @@ public interface NoticeBoardService {
 
     public boolean deleteNoticeBoard(BoardRequestDTO boardRequestDTO);
 
-    public List<BoardResponseDTO> selectNoticeBoardList();
+    public Page<BoardResponseDTO> selectNoticeBoardList(Pageable pageable);
 
     public BoardResponseDTO selectNoticeBoardDtl(BoardDtlRequestDTO boardDtlRequestDTO);
 
@@ -32,4 +32,8 @@ public interface NoticeBoardService {
     public void cancelNoticeBoardDontLike(BoardRequestDTO boardRequestDTO);
 
     public Page<BoardResponseDTO> searchOrSortOrPage(SearchRequestDTO searchRequestDTO, Pageable pageable);
+
+    public Integer calStartPage(Pageable pageable);
+
+    public Integer calEndPage(Pageable pageable, Page<BoardResponseDTO> list);
 }
