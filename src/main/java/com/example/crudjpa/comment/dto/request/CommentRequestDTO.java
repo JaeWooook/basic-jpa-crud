@@ -1,6 +1,5 @@
 package com.example.crudjpa.comment.dto.request;
 
-import com.example.crudjpa.noticeboard.entity.NoticeBoardEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,8 +11,8 @@ import java.time.LocalDateTime;
 @ToString
 @Builder
 public class CommentRequestDTO {
-    private NoticeBoardEntity noticeBoardEntity;
-    private long commentOrd;
+    private long boardId;
+    private long commentId;
     private String commentCn;
     private Integer commentLike;
     private Integer commentDontLike;

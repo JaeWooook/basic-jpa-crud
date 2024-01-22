@@ -7,8 +7,6 @@ import com.example.crudjpa.noticeboard.dto.response.BoardResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 public interface NoticeBoardService {
 
     public boolean createNoticeBoard(BoardRequestDTO boardRequestDTO);

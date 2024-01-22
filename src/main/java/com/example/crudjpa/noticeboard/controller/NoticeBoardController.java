@@ -1,5 +1,6 @@
 package com.example.crudjpa.noticeboard.controller;
 
+import com.example.crudjpa.comment.service.CommentService;
 import com.example.crudjpa.noticeboard.dto.request.BoardDtlRequestDTO;
 import com.example.crudjpa.noticeboard.dto.request.BoardRequestDTO;
 import com.example.crudjpa.noticeboard.dto.request.SearchRequestDTO;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class NoticeBoardController {
 
     private final NoticeBoardService noticeBoardService;
+    private final CommentService commentService;
 
     /**
      * 게시판 페이지 이동
@@ -83,7 +85,7 @@ public class NoticeBoardController {
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "size", defaultValue = "10") Integer size,
             @RequestParam(value = "sort", defaultValue = "boardFstRegDt") String sort,
-            @RequestParam(value = "searchType", defaultValue = "title") String searchType,
+            @RequestParam(value = "searchType", defaultValue = "") String searchType,
             @RequestParam(value = "searchKeyword", defaultValue = "") String searchKeyword,
             Model model
             )

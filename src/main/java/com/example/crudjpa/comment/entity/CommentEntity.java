@@ -51,7 +51,6 @@ public class CommentEntity {
     private LocalDateTime commentFstRegDt;
 
     @Column(name="COMMENT_UPT_REG_NM")
-    @NonNull
     private String commentUptRegNm;
 
     @Column(name="COMMENT_UPT_REG_DT")

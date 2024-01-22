@@ -14,7 +14,6 @@ public class SearchRequestDTO {
     private Integer size;
     @NonNull
     private String sort;
-    @NonNull
     private String searchType;
     private String searchKeyword;
 }

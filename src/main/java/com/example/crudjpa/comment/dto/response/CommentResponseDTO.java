@@ -1,6 +1,6 @@
 package com.example.crudjpa.comment.dto.response;
 
-import com.example.crudjpa.noticeboard.entity.NoticeBoardEntity;
+import com.example.crudjpa.comment.entity.CommentEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 @ToString
 @Builder
 public class CommentResponseDTO {
-    private NoticeBoardEntity noticeBoardEntity;
-    private long commentOrd;
+    private long boardId;
+    private long commentId;
     private String commentCn;
     private Integer commentLike;
     private Integer commentDontLike;
@@ -21,4 +21,18 @@ public class CommentResponseDTO {
     private String commentUptRegNm;
     private LocalDateTime commentUptRegDt;
     private String rowStatCd;
+
+    public static CommentResponseDTO toDTO (CommentEntity commentEntity) {
+        return CommentResponseDTO.builder().commentId(commentEntity.getCommentId())
+                .commentCn(commentEntity.getCommentCn())
+                .commentLike(commentEntity.getCommentLike())
+                .commentDontLike(commentEntity.getCommentDontLike())
+                .commentFstRegNm(commentEntity.getCommentFstRegNm())
+                .commentFstRegDt(commentEntity.getCommentFstRegDt())
+                .commentUptRegNm(commentEntity.getCommentUptRegNm())
+                .commentUptRegDt(commentEntity.getCommentUptRegDt())
+                .rowStatCd(commentEntity.getRowStatCd())
+                .boardId(commentEntity.getNoticeBoardEntity().getBoardId())
+                .build();
+    }
 }
