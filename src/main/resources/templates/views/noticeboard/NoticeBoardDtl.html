@@ -84,7 +84,7 @@
         <div class="col">
             <button class="w-100 btn btn-secondary btn-lg"
                     onclick="location.href='NoticeBoardList.html'"
-                    th:onclick="|location.href='@{/noticeboard}'|"
+                    th:onclick="|history.back()|"
                     type="button">목록으로</button>
         </div>
         <div class="col">
@@ -216,7 +216,7 @@
             .then((response) => {
                 if(response.ok) {
                     window.alert("게시글 수정 완료되었습니다.");
-                    window.location.replace("/noticeboard");
+                    history.back();
                 } else {
                     throw new Error(`${response.status} 에러가 발생했습니다.`);
                 }
