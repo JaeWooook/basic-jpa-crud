@@ -120,34 +120,6 @@
     document.getElementById("searchBtn").addEventListener('click', searchEvent);
     document.getElementById("orderBox").addEventListener('change', orderEvent);
 
-    window.onload = function () {
-        // pagingEvent();
-        console.log();
-    }
-    /**
-     * 페이징처리를 위한값
-     */
-    function pagingEvent() {
-        const currentPage = parseInt(document.getElementById("page").value)+1;
-        const startPage = parseInt(document.getElementById("startPage").value);
-        const endPage = parseInt(document.getElementById("endPage").value);
-        const pagination = document.getElementById("pagination");
-        console.log("확인", currentPage, typeof currentPage, startPage, typeof startPage, endPage, typeof endPage);
-        let html = `<li class="page-item"><a class="page-link" href="#">Previous</a></li>`;
-        for(let i=startPage; i<=endPage; i++) {
-            if(i===currentPage) {
-                html += `
-                    <li class="page-item active"><a class="page-link" th:href="@{/noticeboard(page=${i-1})}">${i}</a></li>
-                    `;
-            } else {
-                html += `
-                    <li class="page-item"><a class="page-link" th:href="@{/noticeboard(page=${i-1})}">${i}</a></li>
-                    `;
-            }
-        }
-        html += `<li class="page-item"><a class="page-link" href="#">Next</a></li>`;
-        pagination.innerHTML=html;
-    }
     /**
      * 검색기능 이벤트
      */
