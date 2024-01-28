@@ -11,8 +11,6 @@ import java.util.Optional;
 @Repository
 public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
 
-    //댓글 게시판당 전체 조회
-    List<CommentEntity> findAllByNoticeBoardEntity(NoticeBoardEntity noticeBoardEntity);
-
+    //댓글 조회
     Optional<CommentEntity> findByCommentId(Long commentId);
 }

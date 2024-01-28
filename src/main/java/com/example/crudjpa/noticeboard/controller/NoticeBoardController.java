@@ -63,8 +63,10 @@ public class NoticeBoardController {
         if("R".equals(boardDtlResponseDTO.getBoardFlag())) {
             //조회수 추가
             noticeBoardService.addNoticeBoardViews(boardRequestDTO);
-            //boardId 예외처리필
-            model.addAttribute("boardResponseDTO", noticeBoardService.selectNoticeBoardDtl(boardDtlRequestDTO));
+            //boardId 예외처리필수
+            BoardResponseDTO noticeDtlInfo = noticeBoardService.selectNoticeBoardDtl(boardDtlRequestDTO);
+            model.addAttribute("boardResponseDTO", noticeDtlInfo);
+            model.addAttribute("commentResponseDTOList", noticeDtlInfo.getComments());
         }
         //update
         model.addAttribute("pageFlag", boardDtlResponseDTO.getBoardFlag());

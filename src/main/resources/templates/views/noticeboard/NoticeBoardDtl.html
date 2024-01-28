@@ -118,6 +118,42 @@
         </div>
     </div>
     <hr class="my-4">
+    <!-- /댓글리스트 -->
+    <table class="table table-bordered border border-primary-subtle">
+        <colgroup>
+            <col style="width:50px;"/><col style="width:7.5%;"/><col style="width:10%;"/><col style="width:15%;"/><col style="width:7.5%;"/><col style="width:7.5%;"/>
+        </colgroup>
+        <thead>
+        <tr>
+            <th scope="col"><input type="checkbox"/></th>
+            <th scope="col">번호</th>
+            <th scope="col">작성자</th>
+            <th scope="col">댓글내용</th>
+            <th scope="col">등록일</th>
+            <th scope="col">좋아요</th>
+            <th scope="col">싫어요</th>
+        </tr>
+        </thead>
+        <tbody id="tableBody">
+        <tr th:if="${not #lists.isEmpty( commentResponseDTOList )}" th:each="row, status : ${commentResponseDTOList}">
+            <td><input type="checkbox"/></td>
+            <!--                    <td th:text="${row.noticeYn == false ? (status.size - status.index) : '공지'}"></td>-->
+            <td th:text="${row.commentId}"></td>
+            <td th:text="${row.commentFstRegNm}"></td>
+            <td th:text="${row.commentCn}"></a></td>
+            <td th:text="${#temporals.format( row.commentFstRegDt, 'yyyy-MM-dd HH:mm' )}"></td>
+            <td th:text="${row.commentLike}"></td>
+            <td th:text="${row.commentDontLike}"></td>
+        </tr>
+
+        <tr th:unless="${not #lists.isEmpty( commentResponseDTOList )}">
+            <td colspan="7">
+                <div class="no_data_msg">댓글이 없습니다.</div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!-- /modal 댓글등록 -->
     <div class="modal fade" id="commentReg" tabindex="-1" aria-labelledby="commentRegLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">

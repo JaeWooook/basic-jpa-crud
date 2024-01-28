@@ -39,6 +39,7 @@ public class BoardResponseDTO {
                 .boardFstRegDt(noticeBoardEntity.getBoardFstRegDt())
                 .boardUptRegNm(noticeBoardEntity.getBoardUptRegNm())
                 .boardUptRegDt(noticeBoardEntity.getBoardUptRegDt())
+                .comments(noticeBoardEntity.getComments())
                 .commentsCnt(noticeBoardEntity.getComments().size())
                 .rowStatCd(noticeBoardEntity.getRowStatCd())
                 .build();
