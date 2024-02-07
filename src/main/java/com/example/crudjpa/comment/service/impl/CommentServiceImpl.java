@@ -50,4 +50,70 @@ public class CommentServiceImpl implements CommentService {
 
         return null;
     }
+
+    /**
+     * 댓글 좋아요 추가
+     * @param commentRequestDTO
+     */
+    @Override
+    @Transactional
+    public void addCommentAddLike(CommentRequestDTO commentRequestDTO) {
+        Optional<CommentEntity> selectComment = commentRepository.findByNoticeBoardEntity_BoardIdAndAndCommentId(commentRequestDTO.getBoardId(),commentRequestDTO.getCommentId());
+
+        if(selectComment.isPresent()) {
+            CommentEntity updateComment = selectComment.get();
+            updateComment.addLikes(updateComment.getCommentLike());
+        }
+    }
+
+    /**
+     * 댓글 싫어요 추가
+     * @param commentRequestDTO
+     */
+    @Override
+    @Transactional
+    public void addCommentAddDontLike(CommentRequestDTO commentRequestDTO) {
+        Optional<CommentEntity> selectComment = commentRepository.findByNoticeBoardEntity_BoardIdAndAndCommentId(commentRequestDTO.getBoardId(), commentRequestDTO.getCommentId());
+
+        if(selectComment.isPresent()) {
+            CommentEntity updateComment = selectComment.get();
+            updateComment.addDontLikes(updateComment.getCommentDontLike());
+        }
+    }
+
+    /**
+     * 댓글 상세 조회
+     * @param commentRequestDTO
+     * @return
+     */
+    @Override
+    public CommentResponseDTO findByCommentId(CommentRequestDTO commentRequestDTO) {
+        Optional<CommentEntity> selectComment = commentRepository.findByNoticeBoardEntity_BoardIdAndAndCommentId(commentRequestDTO.getBoardId(),commentRequestDTO.getCommentId());
+
+        if(selectComment.isPresent()) {
+            CommentEntity comment = selectComment.get();
+            return !ObjectUtils.isEmpty(comment) ? CommentResponseDTO.toDTO(comment) : null;
+
+        }
+
+        return null;
+    }
+
+    /**
+     * 댓글 수정
+     * @param commentRequestDTO
+     * @return
+     */
+    @Override
+    @Transactional
+    public CommentResponseDTO updateComment(CommentRequestDTO commentRequestDTO) {
+        Optional<CommentEntity> selectCommentEntity = commentRepository.findByNoticeBoardEntity_BoardIdAndAndCommentId(commentRequestDTO.getBoardId(), commentRequestDTO.getCommentId());
+        if(selectCommentEntity.isPresent()) {
+            CommentEntity commentEntity = selectCommentEntity.get();
+            commentEntity.updateComment(commentRequestDTO.getCommentUptRegNm(), commentRequestDTO.getCommentCn());
+            return !ObjectUtils.isEmpty(commentEntity) ? CommentResponseDTO.toDTO(commentEntity) : null;
+        }
+
+        return null;
+    }
 }

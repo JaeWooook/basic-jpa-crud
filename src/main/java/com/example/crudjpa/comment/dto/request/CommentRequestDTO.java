@@ -11,7 +11,9 @@ import java.time.LocalDateTime;
 @ToString
 @Builder
 public class CommentRequestDTO {
+    @NonNull
     private long boardId;
+    @NonNull
     private long commentId;
     private String commentCn;
     private Integer commentLike;

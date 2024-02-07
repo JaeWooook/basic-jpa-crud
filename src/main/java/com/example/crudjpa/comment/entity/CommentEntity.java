@@ -68,4 +68,21 @@ public class CommentEntity {
     public void setNoticeBoard (NoticeBoardEntity noticeBoardEntity) {
         this.noticeBoardEntity = noticeBoardEntity;
     }
+
+    /**
+     * 댓글 좋아요 추가
+     * @param commentLike
+     */
+    public void addLikes(Integer commentLike) {this.commentLike = commentLike+1;}
+
+    /**
+     * 댓글 싫어요 추가
+     * @param commentDontLike
+     */
+    public void addDontLikes(Integer commentDontLike) {this.commentDontLike = commentDontLike+1;}
+
+    public void updateComment(String commentUptRegNm, String commentCn) {
+        this.commentUptRegNm = commentUptRegNm;
+        this.commentCn = commentCn;
+    }
 }

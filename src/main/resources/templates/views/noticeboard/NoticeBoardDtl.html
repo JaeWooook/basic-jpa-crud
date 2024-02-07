@@ -13,9 +13,10 @@
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
 <body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+<script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 <input type="hidden" id="pageFlag" th:value="${pageFlag}" readonly>
 <div class="container" th:if="${pageFlag == 'R'}">
     <!--    <form id="deleteForm" th:action="|/api/v1/noticeboard/delete|" method="post">-->
@@ -93,7 +94,7 @@
             <button class="w-100 btn btn-primary btn-lg" type="button" id="updateSaveBtn">게시글 수정</button>
         </div>
         <div class="col">
-            <button class="w-100 btn btn-primary btn-lg" type="button" id="deleteSaveBtn">게시글 삭제</button>
+            <button class="w-100 btn btn-secondary btn-lg" type="button" id="deleteSaveBtn">게시글 삭제</button>
         </div>
         <div class="col">
             <button class="w-100 btn btn-secondary btn-lg"
@@ -116,6 +117,12 @@
         <div class="col">
             <button type="button" class="w-100 btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#commentReg" th:data-bs-whatever="${boardResponseDTO.boardId}">댓글 등록</button>
         </div>
+        <div class="col">
+            <button type="button" class="w-100 btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#commentUpdate" id="commentUpdateSelect" th:data-bs-whatever="${boardResponseDTO.boardId}">댓글 수정</button>
+        </div>
+        <div class="col">
+            <button type="button" class="w-100 btn btn-secondary btn-lg" id="commentDeleteBtn">댓글 삭제</button>
+        </div>
     </div>
     <hr class="my-4">
     <!-- /댓글리스트 -->
@@ -125,18 +132,20 @@
         </colgroup>
         <thead>
         <tr>
-            <th scope="col"><input type="checkbox"/></th>
+            <th scope="col"><input type="checkbox" id="allChecked" onclick="allCheckedEvent()"/></th>
             <th scope="col">번호</th>
             <th scope="col">작성자</th>
             <th scope="col">댓글내용</th>
             <th scope="col">등록일</th>
             <th scope="col">좋아요</th>
             <th scope="col">싫어요</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
         </tr>
         </thead>
         <tbody id="tableBody">
         <tr th:if="${not #lists.isEmpty( commentResponseDTOList )}" th:each="row, status : ${commentResponseDTOList}">
-            <td><input type="checkbox"/></td>
+            <td><input type="checkbox" class="chk" th:data-commentId="${row.commentId}"/></td>
             <!--                    <td th:text="${row.noticeYn == false ? (status.size - status.index) : '공지'}"></td>-->
             <td th:text="${row.commentId}"></td>
             <td th:text="${row.commentFstRegNm}"></td>
@@ -144,10 +153,12 @@
             <td th:text="${#temporals.format( row.commentFstRegDt, 'yyyy-MM-dd HH:mm' )}"></td>
             <td th:text="${row.commentLike}"></td>
             <td th:text="${row.commentDontLike}"></td>
+            <td><button th:onclick="commentLikeEvent([[${row.commentId}]])">👍</button></td>
+            <td><button th:onclick="commentDontLikeEvent([[${row.commentId}]])">👎</button></td>
         </tr>
 
         <tr th:unless="${not #lists.isEmpty( commentResponseDTOList )}">
-            <td colspan="7">
+            <td colspan="9">
                 <div class="no_data_msg">댓글이 없습니다.</div>
             </td>
         </tr>
@@ -174,8 +185,35 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-secondary" id="commentRegCancelBtn" data-bs-dismiss="modal">취소</button>
                     <button type="button" class="btn btn-primary" id="commentRegBtn">등록</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="commentUpdate" tabindex="-1" aria-labelledby="commentUpdateLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="commentUpdateLabel">댓글 수정</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="writer" class="col-form-label">작성자:</label>
+                            <input type="text" class="form-control" id="firstWriter" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="content" class="col-form-label">댓글 내용:</label>
+                            <textarea class="form-control" id="contentUpdate"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="commentUpdateCancelBtn" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" id="commentUpdateBtn">수정</button>
                 </div>
             </div>
         </div>
@@ -239,6 +277,11 @@
         document.getElementById("likeBtn").addEventListener('click', likeEvent);
         document.getElementById("dontLikeBtn").addEventListener('click', dontLikeEvent);
         document.getElementById("commentRegBtn").addEventListener('click', commentRegEvent);
+        document.getElementById("commentUpdateSelect").addEventListener('click', commentUpdateSelectEvent);
+        document.getElementById("commentUpdateBtn").addEventListener('click', commentUpdateEvent);
+        document.getElementById("commentDeleteBtn").addEventListener('click', commentDeleteEvent);
+        document.getElementById("commentRegCancelBtn").addEventListener('click', () => {clearCommentInput("C")});
+        document.getElementById("commentUpdateCancelBtn").addEventListener('click', () => {clearCommentInput("U")});
     }
 
     /**
@@ -437,12 +480,254 @@
             .then((response) => {
                 if (response.ok) {
                     window.alert("댓글 작성 완료되었습니다.");
+                    document.getElementById("commentRegCancelBtn").click();
+                    window.location.reload();
+                    clearCommentInput("C");
                     //게시글페이지로 이동
+                } else {
+                    clearCommentInput("C");
+                    throw new Error(`${response.status} 에러가 발생했습니다.`);
+                }
+            })
+            .then((response) => console.log(response))
+            .catch((error) => console.log(error.message))
+    }
+
+    /**
+     * 댓글 수정 조회 이벤트
+     */
+    function commentUpdateSelectEvent() {
+        const commentId = isChecked();
+        //수정할것 선택안함
+        if(commentId < 0) {
+            window.alert("수정할 댓글을 선택해주세요.");
+            $("#commentUpdate").modal('hide');
+            return;
+        }
+
+        //수정할것 중복 선택
+        if(isOverChecked()) {
+            chkAllUnChecked();
+            window.alert("중복 선택 불가능합니다.");
+            $("#commentUpdate").modal('hide');
+            return;
+        }
+
+        //입력창 초기화
+        clearCommentInput("U");
+        const boardId = document.getElementById("boardId").value;
+        const url = `/api/v1/comment/findByCommentId?commentId=${commentId}&boardId=${boardId}`;
+        fetch(url, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => {
+                if (response.ok) {
+                   return response.json();
+                } else {
+                    clearCommentInput("U");
+                    throw new Error(`${response.status} 에러가 발생했습니다.`);
+                }
+            })
+            .then((json) => {
+                document.getElementById("firstWriter").value = json.commentFstRegNm;
+            })
+            .catch((error) => console.log(error.message))
+    }
+
+    /**
+     * 댓글 수정 이벤트
+     */
+    function commentUpdateEvent() {
+        const boardId = document.getElementById("boardId").value;
+        const commentId = isChecked();
+        const commentUptRegNm = document.getElementById("firstWriter").value;
+        const content = document.getElementById("contentUpdate").value;
+        const url = "/api/v1/comment/update";
+
+        if(commentId < 0) {
+            window.alert("수정할 댓글을 선택해주세요.");
+            $("#commentUpdate").modal('hide');
+            return;
+        }
+
+        if(isOverChecked()) {
+            chkAllUnChecked();
+            window.alert("중복 선택 불가능합니다.");
+            $("#commentUpdate").modal('hide');
+            return;
+        }
+        const payload = {commentCn: content, commentId: commentId, boardId: boardId, commentUptRegNm: commentUptRegNm};
+        fetch(url, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        })
+            .then((response) => {
+                if (response.ok) {
+                    window.alert("댓글 수정 완료되었습니다.");
+                    document.getElementById("commentUpdateCancelBtn").click();
+                    window.location.reload();
+                    //게시글페이지로 이동
+                } else {
+                    clearCommentInput("U");
+                    $("#commentUpdate").modal('hide');
+                    throw new Error(`${response.status} 에러가 발생했습니다.`);
+                }
+            })
+            .then((response) => console.log(response))
+            .catch((error) => console.log(error.message))
+    }
+
+    /**
+     * 댓글 삭제 이벤트
+     */
+    function commentDeleteEvent() {
+        const commentId = isChecked();
+        if(commentId() < 0) {
+            window.alert("삭제할 댓글을 선택해주세요.");
+            return;
+        }
+
+        if(isOverChecked()) {
+            chkAllUnChecked();
+            window.alert("중복 선택 불가능합니다.");
+            return;
+        }
+    }
+
+    /**
+     * 댓글 좋아요 이벤트
+     * @param commentId
+     */
+    function commentLikeEvent(commentId) {
+        const boardId = document.getElementById("boardId").value;
+        const url = "/api/v1/comment/addlike";
+        const payload = {commentId: commentId, boardId: boardId};
+        fetch(url, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        })
+            .then((response) => {
+                if (response.ok) {
+                    window.alert("댓글 좋아요!!");
+                    window.location.reload();
                 } else {
                     throw new Error(`${response.status} 에러가 발생했습니다.`);
                 }
             })
             .then((response) => console.log(response))
             .catch((error) => console.log(error.message))
+    }
+
+    /**
+     * 댓글 싫어요 이벤트
+     * @param commentId
+     */
+    function commentDontLikeEvent(commentId) {
+        const boardId = document.getElementById("boardId").value;
+        const url = "/api/v1/comment/add-dont-like";
+        const payload = {commentId: commentId, boardId: boardId};
+        fetch(url, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        })
+            .then((response) => {
+                if (response.ok) {
+                    window.alert("댓글 싫어요!!");
+                    window.location.reload();
+                } else {
+                    throw new Error(`${response.status} 에러가 발생했습니다.`);
+                }
+            })
+            .then((response) => console.log(response))
+            .catch((error) => console.log(error.message))
+    }
+
+    /**
+     * 중복 체크 확인
+     */
+    function isOverChecked() {
+        let count = 0;
+        document.querySelectorAll(".chk").forEach(function (v,i) {
+           if(v.checked === true) {
+               count++;
+           }
+        });
+        if(count > 1) {
+            return true;
+        }
+        return false;
+    }
+
+    function isChecked() {
+        let index = -1;
+        document.querySelectorAll(".chk").forEach(function (v, i) {
+            if(v.checked === true) {
+                index = i+1;
+            }
+        });
+        return index;
+    }
+
+    /**
+     * 전체 체크
+     */
+    function allCheckedEvent() {
+        const allCheckBox = document.getElementById("allChecked");
+        const isChecked = allCheckBox.checked;
+
+        //전체 체크박스 제외한 모든 체크박스
+        if(isChecked){
+            //체크박스 전체 체크
+            chkAllChecked()
+        }
+        else{
+            //체크박스 전체 해제
+            chkAllUnChecked()
+        }
+    }
+
+    /**
+     * 체크박스 전체 체크
+     */
+    function chkAllChecked(){
+        document.querySelectorAll(".chk").forEach(function(v, i) {
+            v.checked = true;
+        });
+    }
+
+    /**
+     * 체크박스 전체 체크 해제
+     */
+    function chkAllUnChecked(){
+        document.querySelectorAll(".chk").forEach(function(v, i) {
+            v.checked = false;
+        });
+    }
+
+    /**
+     * 댓글 모달 입력칸 초기화
+     */
+    function clearCommentInput(flag) {
+        if(flag === "C") {
+            document.getElementById("writer").value=null;
+            document.getElementById("content").value=null;
+        }
+
+        if(flag === "U") {
+            document.getElementById("firstWriter").value=null;
+            document.getElementById("contentUpdate").value=null;
+        }
     }
 </script>
