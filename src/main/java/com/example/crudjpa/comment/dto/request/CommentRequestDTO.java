@@ -16,6 +16,7 @@ public class CommentRequestDTO {
     @NonNull
     private long commentId;
     private String commentCn;
+    private Integer commentOrder;
     private Integer commentLike;
     private Integer commentDontLike;
     private String commentFstRegNm;

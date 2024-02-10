@@ -18,7 +18,7 @@
         crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 <input type="hidden" id="pageFlag" th:value="${pageFlag}" readonly>
-<div class="container" th:if="${pageFlag == 'R'}">
+<div class="container" th:if="${pageFlag == 'R'}" style="margin-top: 20px;">
     <!--    <form id="deleteForm" th:action="|/api/v1/noticeboard/delete|" method="post">-->
     <!--        <input type="hidden" class="form-control" th:value="${boardResponseDTO.boardId}" readonly/>-->
     <!--    </form>-->
@@ -147,7 +147,7 @@
         <tr th:if="${not #lists.isEmpty( commentResponseDTOList )}" th:each="row, status : ${commentResponseDTOList}">
             <td><input type="checkbox" class="chk" th:data-commentId="${row.commentId}"/></td>
             <!--                    <td th:text="${row.noticeYn == false ? (status.size - status.index) : '공지'}"></td>-->
-            <td th:text="${row.commentId}"></td>
+            <td th:text="${row.commentOrder}"></td>
             <td th:text="${row.commentFstRegNm}"></td>
             <td th:text="${row.commentCn}"></a></td>
             <td th:text="${#temporals.format( row.commentFstRegDt, 'yyyy-MM-dd HH:mm' )}"></td>
@@ -220,7 +220,7 @@
     </div>
 </div> <!-- /container -->
 
-<div class="container" th:if="${pageFlag == 'C'}">
+<div class="container" th:if="${pageFlag == 'C'}" style="margin-top: 20px;">
 
     <form id="createForm" th:object="${noticeBoardDTO}">
 
@@ -507,6 +507,8 @@
 
         //수정할것 중복 선택
         if(isOverChecked()) {
+            const allCheckBox = document.getElementById("allChecked");
+            allCheckBox.checked = false;
             chkAllUnChecked();
             window.alert("중복 선택 불가능합니다.");
             $("#commentUpdate").modal('hide');
@@ -554,6 +556,8 @@
         }
 
         if(isOverChecked()) {
+            const allCheckBox = document.getElementById("allChecked");
+            allCheckBox.checked = false;
             chkAllUnChecked();
             window.alert("중복 선택 불가능합니다.");
             $("#commentUpdate").modal('hide');
@@ -587,17 +591,43 @@
      * 댓글 삭제 이벤트
      */
     function commentDeleteEvent() {
+        const boardId = document.getElementById("boardId").value;
         const commentId = isChecked();
-        if(commentId() < 0) {
+        const url = "/api/v1/comment/delete";
+
+        if(commentId < 0) {
             window.alert("삭제할 댓글을 선택해주세요.");
             return;
         }
 
         if(isOverChecked()) {
+            const allCheckBox = document.getElementById("allChecked");
+            allCheckBox.checked = false;
             chkAllUnChecked();
             window.alert("중복 선택 불가능합니다.");
             return;
         }
+
+        const payload = {commentId: commentId, boardId: boardId};
+        fetch(url, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        })
+            .then((response) => {
+                if (response.ok) {
+                    window.alert("댓글 삭제 완료되었습니다.");
+                    window.location.reload();
+                    //게시글페이지로 이동
+                } else {
+                    clearCommentInput("U");
+                    throw new Error(`${response.status} 에러가 발생했습니다.`);
+                }
+            })
+            .then((response) => console.log(response))
+            .catch((error) => console.log(error.message))
     }
 
     /**
@@ -674,7 +704,7 @@
         let index = -1;
         document.querySelectorAll(".chk").forEach(function (v, i) {
             if(v.checked === true) {
-                index = i+1;
+                index = parseInt(v.dataset.commentid);
             }
         });
         return index;

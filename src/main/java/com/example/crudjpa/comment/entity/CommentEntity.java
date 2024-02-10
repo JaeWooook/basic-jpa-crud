@@ -35,6 +35,10 @@ public class CommentEntity {
     private String commentCn;
 
     @Builder.Default
+    @Column(name="COMMENT_ORDER")
+    private Integer commentOrder = 1;
+
+    @Builder.Default
     @Column(name="COMMENT_LIKE")
     private Integer commentLike = 0;
 

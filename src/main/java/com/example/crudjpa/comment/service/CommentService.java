@@ -13,4 +13,6 @@ public interface CommentService {
     public CommentResponseDTO findByCommentId(CommentRequestDTO commentRequestDTO);
 
     public CommentResponseDTO updateComment(CommentRequestDTO commentRequestDTO);
+
+    public void deleteComment(CommentRequestDTO commentRequestDTO);
 }

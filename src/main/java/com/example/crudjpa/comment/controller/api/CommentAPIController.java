@@ -79,4 +79,15 @@ public class CommentAPIController {
 
         return ResponseEntity.ok(commentDtl);
     }
+
+    /**
+     * 댓글 삭제
+     * @param commentRequestDTO
+     * @return
+     */
+    @DeleteMapping("/api/v1/comment/delete")
+    public ResponseEntity<Void> deleteComment(@RequestBody CommentRequestDTO commentRequestDTO){
+        commentService.deleteComment(commentRequestDTO);
+        return ResponseEntity.noContent().build();
+    }
 }

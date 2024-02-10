@@ -73,7 +73,8 @@ public class NoticeBoardEntity {
     @Column(name="ROW_STAT_CD")
     private String rowStatCd;
 
-    @OneToMany(mappedBy = "noticeBoardEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)//매핑된 컬럼의 변수
+    //게시글 삭제시 댓글도 삭제하기 위해 CascadeType.REMOVE로 한다.
+    @OneToMany(mappedBy = "noticeBoardEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)//매핑된 컬럼의 변수
     private List<CommentEntity> comments = new ArrayList<CommentEntity>();
 
     /**

@@ -14,6 +14,7 @@ public class CommentResponseDTO {
     private long boardId;
     private long commentId;
     private String commentCn;
+    private Integer commentOrder;
     private Integer commentLike;
     private Integer commentDontLike;
     private String commentFstRegNm;
@@ -25,6 +26,7 @@ public class CommentResponseDTO {
     public static CommentResponseDTO toDTO (CommentEntity commentEntity) {
         return CommentResponseDTO.builder().commentId(commentEntity.getCommentId())
                 .commentCn(commentEntity.getCommentCn())
+                .commentOrder(commentEntity.getCommentOrder())
                 .commentLike(commentEntity.getCommentLike())
                 .commentDontLike(commentEntity.getCommentDontLike())
                 .commentFstRegNm(commentEntity.getCommentFstRegNm())

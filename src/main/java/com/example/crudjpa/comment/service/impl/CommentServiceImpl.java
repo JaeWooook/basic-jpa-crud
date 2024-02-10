@@ -32,9 +32,15 @@ public class CommentServiceImpl implements CommentService {
 
         Optional<NoticeBoardEntity> selectBoard = noticeBoardRepository.findByBoardId(commentRequestDTO.getBoardId());
         if (selectBoard.isPresent()) {
+            Integer commentOrder = 1;
             NoticeBoardEntity noticeBoardEntity = selectBoard.get();
+            if(noticeBoardEntity.getComments().size() > 0) {
+                commentOrder = noticeBoardEntity.getComments().size();
+                commentOrder++;
+            }
             CommentEntity commentEntity = CommentEntity.builder()
                     .noticeBoardEntity(noticeBoardEntity)
+                    .commentOrder(commentOrder)
                     .commentCn(commentRequestDTO.getCommentCn())
                     .commentFstRegNm(commentRequestDTO.getCommentFstRegNm())
                     .rowStatCd("C")
@@ -108,6 +114,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public CommentResponseDTO updateComment(CommentRequestDTO commentRequestDTO) {
         Optional<CommentEntity> selectCommentEntity = commentRepository.findByNoticeBoardEntity_BoardIdAndAndCommentId(commentRequestDTO.getBoardId(), commentRequestDTO.getCommentId());
+
         if(selectCommentEntity.isPresent()) {
             CommentEntity commentEntity = selectCommentEntity.get();
             commentEntity.updateComment(commentRequestDTO.getCommentUptRegNm(), commentRequestDTO.getCommentCn());
@@ -115,5 +122,14 @@ public class CommentServiceImpl implements CommentService {
         }
 
         return null;
+    }
+
+    /**
+     * 댓글 삭제
+     * @param commentRequestDTO
+     */
+    @Override
+    public void deleteComment(CommentRequestDTO commentRequestDTO) {
+        commentRepository.deleteById(commentRequestDTO.getCommentId());
     }
 }
