@@ -1,5 +1,7 @@
 package com.example.crudjpa.noticeboard.service.impl;
 
+import com.example.crudjpa.global.exception.BoardNotFoundException;
+import com.example.crudjpa.global.exception.ErrorCode;
 import com.example.crudjpa.noticeboard.dto.request.BoardDtlRequestDTO;
 import com.example.crudjpa.noticeboard.dto.request.BoardRequestDTO;
 import com.example.crudjpa.noticeboard.dto.request.SearchRequestDTO;
@@ -40,22 +42,14 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
     @Transactional//jpa 더티체킹을 하기위한 트랜잭션 필요하다.
     public boolean updateNoticeBoard(BoardRequestDTO boardRequestDTO) {
         //업데이트를 하기 위한 객체 조회
-        Optional<NoticeBoardEntity> selectNoticeBoardEntity = noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId());
-        if(selectNoticeBoardEntity.isPresent()) {
-            NoticeBoardEntity tempNoticeBoardEntity = selectNoticeBoardEntity.get();
-            //jpa 더티체킹으로 엔티티변환으로 update가 이루어진다.
-            tempNoticeBoardEntity.updateNoticeBoard(boardRequestDTO.getBoardTitle(), boardRequestDTO.getBoardCn(), boardRequestDTO.getBoardUptRegNm(), "U");
-        } else {
-            return false;
-        }
-        Optional<NoticeBoardEntity> resultNoticeBoardEntity = noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId());
+        NoticeBoardEntity selectNoticeBoardEntity = noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId())
+                .orElseThrow();
+        //jpa 더티체킹으로 엔티티변환으로 update가 이루어진다.
+        selectNoticeBoardEntity.updateNoticeBoard(boardRequestDTO.getBoardTitle(), boardRequestDTO.getBoardCn(), boardRequestDTO.getBoardUptRegNm(), "U");
+        NoticeBoardEntity resultNoticeBoardEntity = noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId())
+                .orElseThrow(() -> new BoardNotFoundException(ErrorCode.POST_NOT_FOUND));
 
-        if(resultNoticeBoardEntity.isPresent()) {
-            NoticeBoardEntity rsNoticeBoardEntity = resultNoticeBoardEntity.get();
-            return "U".equals(rsNoticeBoardEntity.getRowStatCd());
-        } else {
-            return false;
-        }
+        return "U".equals(resultNoticeBoardEntity.getRowStatCd());
     }
 
     @Override
@@ -80,15 +74,10 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
 
     @Override
     public BoardResponseDTO selectNoticeBoardDtl(BoardDtlRequestDTO boardDtlRequestDTO) {
-        Optional<NoticeBoardEntity> resultNoticeBoardEntity = noticeBoardRepository.findByBoardId(boardDtlRequestDTO.getBoardId());
+        NoticeBoardEntity resultNoticeBoardEntity = noticeBoardRepository.findByBoardId(boardDtlRequestDTO.getBoardId())
+                .orElseThrow(() -> new BoardNotFoundException(ErrorCode.POST_NOT_FOUND));
 
-        //protected level 이라서 entity 빈생성자 생성이 안된다.
-        if(resultNoticeBoardEntity.isPresent()) {
-            NoticeBoardEntity transNoticeBoardEntity = resultNoticeBoardEntity.get();
-            return !ObjectUtils.isEmpty(transNoticeBoardEntity) ? BoardResponseDTO.toDTO(transNoticeBoardEntity) : null;
-        }
-
-        return null;
+        return !ObjectUtils.isEmpty(resultNoticeBoardEntity) ? BoardResponseDTO.toDTO(resultNoticeBoardEntity) : null;
     }
 
     /**
@@ -98,11 +87,10 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
     @Override
     @Transactional
     public void addNoticeBoardViews(BoardRequestDTO boardRequestDTO) {
-        Optional<NoticeBoardEntity> selectNbEntity = noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId());
-        if(selectNbEntity.isPresent()) {
-            NoticeBoardEntity updateNbEntity = selectNbEntity.get();
-            updateNbEntity.addViews(updateNbEntity.getBoardViews());
-        }
+        NoticeBoardEntity noticeBoardEntity = noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId())
+                .orElseThrow(() -> new BoardNotFoundException(ErrorCode.POST_NOT_FOUND));
+
+        noticeBoardEntity.addViews(noticeBoardEntity.getBoardViews());
     }
 
     /**
@@ -112,12 +100,10 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
     @Override
     @Transactional
     public void addNoticeBoardLike(BoardRequestDTO boardRequestDTO) {
-        Optional<NoticeBoardEntity> selectBoard =  noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId());
+        NoticeBoardEntity noticeBoardEntity =  noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId())
+                .orElseThrow(() -> new BoardNotFoundException(ErrorCode.POST_NOT_FOUND));
 
-        if(selectBoard.isPresent()) {
-            NoticeBoardEntity updateBoard = selectBoard.get();
-            updateBoard.addLikes(updateBoard.getBoardLike());
-        }
+        noticeBoardEntity.addLikes(noticeBoardEntity.getBoardLike());
     }
 
     /**
@@ -127,12 +113,10 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
     @Override
     @Transactional
     public void cancelNoticeBoardLike(BoardRequestDTO boardRequestDTO) {
-        Optional<NoticeBoardEntity> selectBoard =  noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId());
+        NoticeBoardEntity noticeBoardEntity =  noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId())
+                .orElseThrow(() -> new BoardNotFoundException(ErrorCode.POST_NOT_FOUND));
 
-        if(selectBoard.isPresent()) {
-            NoticeBoardEntity updateBoard = selectBoard.get();
-            updateBoard.cancelLike(updateBoard.getBoardLike());
-        }
+        noticeBoardEntity.cancelLike(noticeBoardEntity.getBoardLike());
     }
 
     /**
@@ -142,12 +126,10 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
     @Override
     @Transactional
     public void addNoticeBoardDontLike(BoardRequestDTO boardRequestDTO) {
-        Optional<NoticeBoardEntity> selectBoard =  noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId());
+        NoticeBoardEntity noticeBoardEntity =  noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId())
+                .orElseThrow(() -> new BoardNotFoundException(ErrorCode.POST_NOT_FOUND));
 
-        if(selectBoard.isPresent()) {
-            NoticeBoardEntity updateBoard = selectBoard.get();
-            updateBoard.addDonLikes(updateBoard.getBoardDontLike());
-        }
+        noticeBoardEntity.addDonLikes(noticeBoardEntity.getBoardDontLike());
     }
 
     /**
@@ -157,12 +139,10 @@ public class NoticeBoardServiceImpl implements NoticeBoardService {
     @Override
     @Transactional
     public void cancelNoticeBoardDontLike(BoardRequestDTO boardRequestDTO) {
-        Optional<NoticeBoardEntity> selectBoard =  noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId());
+        NoticeBoardEntity noticeBoardEntity =  noticeBoardRepository.findByBoardId(boardRequestDTO.getBoardId())
+                .orElseThrow(() -> new BoardNotFoundException(ErrorCode.POST_NOT_FOUND));
 
-        if(selectBoard.isPresent()) {
-            NoticeBoardEntity updateBoard = selectBoard.get();
-            updateBoard.cancelDonLike(updateBoard.getBoardDontLike());
-        }
+        noticeBoardEntity.cancelDonLike(noticeBoardEntity.getBoardDontLike());
     }
 
     /**

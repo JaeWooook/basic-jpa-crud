@@ -5,6 +5,9 @@ import com.example.crudjpa.comment.dto.response.CommentResponseDTO;
 import com.example.crudjpa.comment.entity.CommentEntity;
 import com.example.crudjpa.comment.repository.CommentRepository;
 import com.example.crudjpa.comment.service.CommentService;
+import com.example.crudjpa.global.exception.BoardNotFoundException;
+import com.example.crudjpa.global.exception.CommentNotFoundException;
+import com.example.crudjpa.global.exception.ErrorCode;
 import com.example.crudjpa.noticeboard.entity.NoticeBoardEntity;
 import com.example.crudjpa.noticeboard.repository.NoticeBoardRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,32 +32,25 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentResponseDTO createComment(CommentRequestDTO commentRequestDTO) {
-
-        Optional<NoticeBoardEntity> selectBoard = noticeBoardRepository.findByBoardId(commentRequestDTO.getBoardId());
-        if (selectBoard.isPresent()) {
-            Integer commentOrder = 1;
-            NoticeBoardEntity noticeBoardEntity = selectBoard.get();
-            if(noticeBoardEntity.getComments().size() > 0) {
-                commentOrder = noticeBoardEntity.getComments().size();
-                commentOrder++;
-            }
-            CommentEntity commentEntity = CommentEntity.builder()
-                    .noticeBoardEntity(noticeBoardEntity)
-                    .commentOrder(commentOrder)
-                    .commentCn(commentRequestDTO.getCommentCn())
-                    .commentFstRegNm(commentRequestDTO.getCommentFstRegNm())
-                    .rowStatCd("C")
-                    .build();
-            noticeBoardEntity.addComment(commentEntity);
-            commentRepository.save(commentEntity);
-            Optional<CommentEntity> selectComment = commentRepository.findById(commentEntity.getCommentId());
-            if (selectComment.isPresent()) {
-                CommentEntity comment = selectComment.get();
-                return !ObjectUtils.isEmpty(comment) ? CommentResponseDTO.toDTO(comment) : null;
-            }
+        NoticeBoardEntity noticeBoardEntity = noticeBoardRepository.findByBoardId(commentRequestDTO.getBoardId())
+                .orElseThrow(() -> new BoardNotFoundException(ErrorCode.POST_NOT_FOUND));
+        Integer commentOrder = 1;
+        if(noticeBoardEntity.getComments().size() > 0) {
+            commentOrder = noticeBoardEntity.getComments().size();
+            commentOrder++;
         }
-
-        return null;
+        CommentEntity commentEntity = CommentEntity.builder()
+                .noticeBoardEntity(noticeBoardEntity)
+                .commentOrder(commentOrder)
+                .commentCn(commentRequestDTO.getCommentCn())
+                .commentFstRegNm(commentRequestDTO.getCommentFstRegNm())
+                .rowStatCd("C")
+                .build();
+        noticeBoardEntity.addComment(commentEntity);
+        commentRepository.save(commentEntity);
+        CommentEntity resultCommentEnttiy = commentRepository.findById(commentEntity.getCommentId())
+                .orElseThrow(() -> new CommentNotFoundException(ErrorCode.COMMENT_NOT_FOUND));
+        return !ObjectUtils.isEmpty(resultCommentEnttiy) ? CommentResponseDTO.toDTO(resultCommentEnttiy) : null;
     }
 
     /**
@@ -64,12 +60,9 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void addCommentAddLike(CommentRequestDTO commentRequestDTO) {
-        Optional<CommentEntity> selectComment = commentRepository.findByNoticeBoardEntity_BoardIdAndAndCommentId(commentRequestDTO.getBoardId(),commentRequestDTO.getCommentId());
-
-        if(selectComment.isPresent()) {
-            CommentEntity updateComment = selectComment.get();
-            updateComment.addLikes(updateComment.getCommentLike());
-        }
+        CommentEntity commentEntity = commentRepository.findByNoticeBoardEntity_BoardIdAndAndCommentId(commentRequestDTO.getBoardId(),commentRequestDTO.getCommentId())
+                .orElseThrow(() -> new CommentNotFoundException(ErrorCode.COMMENT_NOT_FOUND));
+        commentEntity.addLikes(commentEntity.getCommentLike());
     }
 
     /**
@@ -79,12 +72,9 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void addCommentAddDontLike(CommentRequestDTO commentRequestDTO) {
-        Optional<CommentEntity> selectComment = commentRepository.findByNoticeBoardEntity_BoardIdAndAndCommentId(commentRequestDTO.getBoardId(), commentRequestDTO.getCommentId());
-
-        if(selectComment.isPresent()) {
-            CommentEntity updateComment = selectComment.get();
-            updateComment.addDontLikes(updateComment.getCommentDontLike());
-        }
+        CommentEntity commentEntity = commentRepository.findByNoticeBoardEntity_BoardIdAndAndCommentId(commentRequestDTO.getBoardId(),commentRequestDTO.getCommentId())
+                .orElseThrow(() -> new CommentNotFoundException(ErrorCode.COMMENT_NOT_FOUND));
+        commentEntity.addDontLikes(commentEntity.getCommentDontLike());
     }
 
     /**
@@ -94,15 +84,9 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public CommentResponseDTO findByCommentId(CommentRequestDTO commentRequestDTO) {
-        Optional<CommentEntity> selectComment = commentRepository.findByNoticeBoardEntity_BoardIdAndAndCommentId(commentRequestDTO.getBoardId(),commentRequestDTO.getCommentId());
-
-        if(selectComment.isPresent()) {
-            CommentEntity comment = selectComment.get();
-            return !ObjectUtils.isEmpty(comment) ? CommentResponseDTO.toDTO(comment) : null;
-
-        }
-
-        return null;
+        CommentEntity commentEntity = commentRepository.findByNoticeBoardEntity_BoardIdAndAndCommentId(commentRequestDTO.getBoardId(),commentRequestDTO.getCommentId())
+                .orElseThrow(() -> new CommentNotFoundException(ErrorCode.COMMENT_NOT_FOUND));
+        return !ObjectUtils.isEmpty(commentEntity) ? CommentResponseDTO.toDTO(commentEntity) : null;
     }
 
     /**
@@ -113,15 +97,11 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentResponseDTO updateComment(CommentRequestDTO commentRequestDTO) {
-        Optional<CommentEntity> selectCommentEntity = commentRepository.findByNoticeBoardEntity_BoardIdAndAndCommentId(commentRequestDTO.getBoardId(), commentRequestDTO.getCommentId());
+        CommentEntity commentEntity = commentRepository.findByNoticeBoardEntity_BoardIdAndAndCommentId(commentRequestDTO.getBoardId(),commentRequestDTO.getCommentId())
+                .orElseThrow(() -> new CommentNotFoundException(ErrorCode.COMMENT_NOT_FOUND));
 
-        if(selectCommentEntity.isPresent()) {
-            CommentEntity commentEntity = selectCommentEntity.get();
-            commentEntity.updateComment(commentRequestDTO.getCommentUptRegNm(), commentRequestDTO.getCommentCn());
-            return !ObjectUtils.isEmpty(commentEntity) ? CommentResponseDTO.toDTO(commentEntity) : null;
-        }
-
-        return null;
+        commentEntity.updateComment(commentRequestDTO.getCommentUptRegNm(), commentRequestDTO.getCommentCn());
+        return !ObjectUtils.isEmpty(commentEntity) ? CommentResponseDTO.toDTO(commentEntity) : null;
     }
 
     /**
