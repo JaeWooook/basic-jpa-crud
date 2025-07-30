@@ -37,7 +37,8 @@
 - **NOTICEBOARD**: 게시글 테이블
 - **COMMENT**: 댓글 테이블
 
-![JPABoardCRUD.png](attachment:135685da-ece7-470e-a504-c9e9dda483c5:JPABoardCRUD.png)
+<img width="620" height="412" alt="JPABoardCRUD" src="https://github.com/user-attachments/assets/1c6bebc0-6714-4567-94e1-4ec609406397" />
+
     
 ERD는 ERDCloud를 기반으로 설계되었습니다.
 
